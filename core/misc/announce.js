@@ -50,21 +50,23 @@
   /**
    * Concatenates announcements to a single string; appends to the live region.
    */
-  function announce() {
+  function processAnnounce() {
     var text = [];
     var priority = 'polite';
     var announcement;
 
-    // Create an array of announcement strings to be joined and appended to the
-    // aria live region.
-    var il = announcements.length;
-    for (var i = 0; i < il; i++) {
-      announcement = announcements.pop();
-      text.unshift(announcement.text);
-      // If any of the announcements has a priority of assertive then the group
-      // of joined announcements will have this priority.
-      if (announcement.priority === 'assertive') {
-        priority = 'assertive';
+    if (announcements.length) {
+      // Create an array of announcement strings to be joined and appended to
+      // the aria live region.
+      var il = announcements.length;
+      for (var i = 0; i < il; i++) {
+        announcement = announcements.pop();
+        text.unshift(announcement.text);
+        // If any of the announcements has a priority of assertive then the
+        // group of joined announcements will have this priority.
+        if (announcement.priority === 'assertive') {
+          priority = 'assertive';
+        }
       }
     }
 
@@ -81,7 +83,12 @@
       // The live text area is updated. Allow the AT to announce the text.
       liveElement.setAttribute('aria-busy', 'false');
     }
+
   }
+
+  // 200 ms is right at the cusp where humans notice a pause, so we will wait
+  // at most this much time before the set of queued announcements is read.
+  var debouncedProcessAnnounce = debounce(processAnnounce, 200);
 
   /**
    * Triggers audio UAs to read the supplied text.
@@ -96,25 +103,24 @@
    *
    * @param {string} text
    *   A string to be read by the UA.
-   * @param {string} [priority='polite']
+   * @param {string} priority
    *   A string to indicate the priority of the message. Can be either
    *   'polite' or 'assertive'.
-   *
-   * @return {function}
-   *   The return of the call to debounce.
    *
    * @see http://www.w3.org/WAI/PF/aria-practices/#liveprops
    */
   Drupal.announce = function (text, priority) {
-    // Save the text and priority into a closure variable. Multiple simultaneous
-    // announcements will be concatenated and read in sequence.
-    announcements.push({
-      text: text,
-      priority: priority
-    });
-    // Immediately invoke the function that debounce returns. 200 ms is right at
-    // the cusp where humans notice a pause, so we will wait
-    // at most this much time before the set of queued announcements is read.
-    return (debounce(announce, 200)());
+    if (typeof text === 'string') {
+      // Save the text and priority into a closure variable. Multiple
+      // simultaneous announcements will be concatenated and read in sequence.
+      announcements.push({
+        text: text,
+        priority: priority
+      });
+      debouncedProcessAnnounce(announcements);
+    }
+    else {
+      throw new Error(Drupal.t('"text" passed Drupal.announce must be a string.'));
+    }
   };
 }(Drupal, Drupal.debounce));

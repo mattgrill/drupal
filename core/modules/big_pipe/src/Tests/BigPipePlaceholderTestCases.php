@@ -110,11 +110,11 @@ class BigPipePlaceholderTestCases {
           'command' => 'insert',
           'method' => 'replaceWith',
           'selector' => '[data-big-pipe-placeholder-id="callback=Drupal%5CCore%5CRender%5CElement%5CStatusMessages%3A%3ArenderMessages&args[0]&token=_HAdUpwWmet0TOTe2PSiJuMntExoshbm1kh2wQzzzAA"]',
-          'data' => "\n" . '    <div role="contentinfo" aria-label="Status message" class="messages messages--status">' . "\n" . '                  <h2 class="visually-hidden">Status message</h2>' . "\n" . '                    Hello from BigPipe!' . "\n" . '            </div>' . "\n    ",
+          'data' => "\n" . '<div data-drupal-messages>' . "\n" . '    <div role="contentinfo" aria-label="Status message" class="messages messages--status">' . "\n" . '                  <h2 class="visually-hidden">Status message</h2>' . "\n" . '                    Hello from BigPipe!' . "\n" . '            </div>' . "\n" . '    </div>' . "\n",
           'settings' => NULL,
         ],
       ];
-      $status_messages->embeddedHtmlResponse = '<link rel="stylesheet" href="' . base_path() . 'core/themes/classy/css/components/messages.css?' . $container->get('state')->get('system.css_js_query_string') . '" media="all" />' . "\n" . "\n" . '    <div role="contentinfo" aria-label="Status message" class="messages messages--status">' . "\n" . '                  <h2 class="visually-hidden">Status message</h2>' . "\n" . '                    Hello from BigPipe!' . "\n" . '            </div>' . "\n    \n";
+      $status_messages->embeddedHtmlResponse = '<div data-drupal-messages>' . "\n" . '    <div role="contentinfo" aria-label="Status message" class="messages messages--status">' . "\n" . '                  <h2 class="visually-hidden">Status message</h2>' . "\n" . '                    Hello from BigPipe!' . "\n" . '            </div>' . "\n" . '    </div>' . "\n\n";
     }
 
 

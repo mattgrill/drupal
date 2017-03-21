@@ -1,0 +1,7 @@
+show_message:
+  version: VERSION
+  js:
+    js/js_message_test.js: {}
+  dependencies:
+    - core/drupal.message
+    - core/jquery.once

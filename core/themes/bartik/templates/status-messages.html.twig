@@ -23,7 +23,7 @@
 {% block messages %}
   {% if message_list is not empty %}
     {{ attach_library('bartik/messages') }}
-    <div class="messages__wrapper layout-container">
+    <div class="messages__wrapper layout-container" data-drupal-messages>
       {{ parent() }}
     </div>
   {% endif %}

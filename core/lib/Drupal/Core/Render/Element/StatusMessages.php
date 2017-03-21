@@ -75,19 +75,17 @@ class StatusMessages extends RenderElement {
   public static function renderMessages($type) {
     $render = [];
     $messages = drupal_get_messages($type);
-    if ($messages) {
-      // Render the messages.
-      $render = [
-        '#theme' => 'status_messages',
-        // @todo Improve when https://www.drupal.org/node/2278383 lands.
-        '#message_list' => $messages,
-        '#status_headings' => [
-          'status' => t('Status message'),
-          'error' => t('Error message'),
-          'warning' => t('Warning message'),
-        ],
-      ];
-    }
+    // Render the messages.
+    $render = [
+      '#theme' => 'status_messages',
+      // @todo Improve when https://www.drupal.org/node/2278383 lands.
+      '#message_list' => $messages,
+      '#status_headings' => [
+        'status' => t('Status message'),
+        'error' => t('Error message'),
+        'warning' => t('Warning message'),
+      ],
+    ];
     return $render;
   }
 
