@@ -17,6 +17,9 @@ class JsMessageTest extends JavascriptTestBase {
    */
   public static $modules = ['js_message_test'];
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
 
@@ -27,7 +30,6 @@ class JsMessageTest extends JavascriptTestBase {
     $theme_config->save();
   }
 
-
   /**
    * Test click on links to show messages and remove messages.
    */
@@ -35,49 +37,31 @@ class JsMessageTest extends JavascriptTestBase {
     $web_assert = $this->assertSession();
     $this->drupalGet('js_message_test_link');
 
+    $current_messages = [];
     foreach (JsMessageTestCases::getMessagesSelectors() as $messagesSelector) {
       $web_assert->elementExists('css', $messagesSelector);
-      foreach (JsMessageTestCases ::getContexts() as $context) {
-        foreach (JsMessageTestCases::getTypes() as $type) {
-          $this->clickLink("Show-$messagesSelector-$context-$type");
-          $selector = "$messagesSelector .messages.messages--$type.js-messages.js-messages-context--$context";
-          $msg_element = $web_assert->waitForElementVisible('css', $selector);
-          $this->assertNotEmpty($msg_element, "Message element visible: $selector");
-          $web_assert->elementContains('css', $selector, "Msg-$context-$type");
-          // Click all remove links except the one that will remove the message.
-          $this->clickAllRemoveLinksExcept($context, $type, $messagesSelector);
-          // Confirm the message was not removed.
-          $web_assert->elementContains('css', $selector, "Msg-$context-$type");
-          // Click the remove links that should remove the message.
-          $this->clickLink("Remove-$messagesSelector-$context-$type");
-          $web_assert->elementNotExists('css', $selector);
-        }
+      foreach (JsMessageTestCases::getTypes() as $type) {
+        $this->clickLink("Show-$messagesSelector-$type");
+        $selector = "$messagesSelector .messages.messages--$type";
+        $msg_element = $web_assert->waitForElementVisible('css', $selector);
+        $this->assertNotEmpty($msg_element, "Message element visible: $selector");
+        $web_assert->elementContains('css', $selector, "Msg-$type");
+        $current_messages[$selector] = "Msg-$type";
+        $this->assertCurrentMessages($current_messages);
       }
-      // Test removing all messages of a specific context.
-      $this->clickLink("Show-$messagesSelector-context1-error");
-      $this->clickLink("Show-$messagesSelector-context2-error");
-      $this->clickLink("Show-$messagesSelector-context1-warning");
-      $this->clickLink("Show-$messagesSelector-context2-warning");
-      $this->waitForMessageElement('warning', 'context2');
-      $this->assertCurrentMessages([
-        'Msg-context1-error',
-        'Msg-context2-error',
-        'Msg-context1-warning',
-        'Msg-context2-warning',
-      ]);
-      $this->clickLink('Remove-context1-all');
-      $web_assert->assertWaitOnAjaxRequest();
-      $this->assertCurrentMessages([
-        'Msg-context2-error',
-        'Msg-context2-warning',
-      ]);
-      $this->clickLink('Remove-context2-all');
-      $this->assertCurrentMessages([]);
+      // Remove messages 1 by 1 and confirm the messages are expected.
+      foreach (JsMessageTestCases::getTypes() as $type) {
+        $this->clickLink("Remove-$messagesSelector-$type");
+        $selector = "$messagesSelector .messages.messages--$type";
+        // The message for this selector should not be on the page.
+        unset($current_messages[$selector]);
+        $this->assertCurrentMessages($current_messages);
+      }
     }
+
     // Test adding multiple messages at once.
     // @see processMessages()
     $this->clickLink('Show Multiple');
-    $this->waitForMessageElement('status', 'context-9');
 
     $current_messages = [];
     for ($i = 0; $i < 10; $i++) {
@@ -86,27 +70,6 @@ class JsMessageTest extends JavascriptTestBase {
     $this->assertCurrentMessages($current_messages);
     $this->clickLink('Remove Multiple');
     $this->assertCurrentMessages([]);
-
-
-
-  }
-
-  /**
-   * Clicks all remove message links except for combination specified.
-   *
-   * @param string $exclude_context
-   *   The message context to exclude.
-   * @param string $exclude_type
-   *   The message type to exclude.
-   */
-  protected function clickAllRemoveLinksExcept($exclude_context, $exclude_type, $messagesSelector) {
-    foreach (JsMessageTestCases::getContexts() as $context) {
-      foreach (JsMessageTestCases::getTypes() as $type) {
-        if ($context !== $exclude_context || $type !== $exclude_type) {
-          $this->clickLink("Remove-$messagesSelector-$context-$type");
-        }
-      }
-    }
   }
 
   /**
@@ -116,6 +79,7 @@ class JsMessageTest extends JavascriptTestBase {
    *   Expected messages.
    */
   protected function assertCurrentMessages(array $expected_messages) {
+    $expected_messages = array_values($expected_messages);
     $current_messages = [];
     if ($message_divs = $this->getSession()->getPage()->findAll('css', '.messages')) {
       foreach ($message_divs as $message_div) {
@@ -124,19 +88,6 @@ class JsMessageTest extends JavascriptTestBase {
       }
     }
     $this->assertEquals($expected_messages, $current_messages);
-  }
-
-  /**
-   * Waits for an element message to be visible.
-   *
-   * @param string $type
-   *   The type of the message.
-   * @param string $context
-   *   The context of the message.
-   */
-  protected function waitForMessageElement($type, $context) {
-    $last_msg_element = $this->assertSession()->waitForElementVisible('css', ".messages.messages--$type.js-messages.js-messages-context--$context");
-    $this->assertNotEmpty($last_msg_element, "Message element visible.");
   }
 
 }

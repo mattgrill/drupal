@@ -8,16 +8,6 @@ namespace Drupal\system\Tests;
 class JsMessageTestCases {
 
   /**
-   * Gets the test contexts.
-   *
-   * @return string[]
-   *   The test contexts.
-   */
-  public static function getContexts() {
-    return ['context1', 'context2'];
-  }
-
-  /**
    * Gets the test types.
    *
    * @return string[]

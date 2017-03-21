@@ -3,7 +3,7 @@
  *  Testing behavior for JSMessageTest.
  */
 
-(function ($, message) {
+(function ($) {
 
   'use strict';
 
@@ -15,35 +15,50 @@
    */
   Drupal.behaviors.js_message_test = {
     attach: function (context) {
-      var message = Drupal.message();
-      var messageIndex;
-      var messageList = [];
+      var messageObjects = {};
+      var messageIndexes = {};
+
       $('.show-link').once('show-msg').on('click', function (e) {
+
         e.preventDefault();
         var type = e.currentTarget.getAttribute('data-type');
-        messageIndex = message.add('Msg-' + type, type);
-        messageList.push(messageIndex);
+        messageIndexes[type] = getMessageObject(e).add('Msg-' + type, type);
       });
       $('.remove-link').once('remove-msg').on('click', function (e) {
         e.preventDefault();
-        message.remove(messageList);
-        messageList = [];
+        var type = e.currentTarget.getAttribute('data-type');
+        getMessageObject(e).remove(messageIndexes[type]);
       });
       $('.show-multiple').once('show-msg').on('click', function (e) {
         e.preventDefault();
         for (var i = 0; i < 10; i++) {
-          messageList.push(message.add('Msg-' + i, 'status'));
+          messageIndexes[i] = getMessageObject(e).add('Msg-' + i, 'status');
         }
 
       });
       $('.remove-multiple').once('remove-msg').on('click', function (e) {
         e.preventDefault();
         for (var i = 0; i < 10; i++) {
-          message.remove(messageList[i]);
+          getMessageObject(e).remove(messageIndexes[i]);
         }
-        messageList = [];
       });
+
+      /**
+       * Gets message object for the click event.
+       *
+       * @param {jQuery.Event} e
+       *   The click event.
+       * @return {Drupal.message~messageDefinition}
+       *  The message object for correct div.
+       */
+      function getMessageObject(e) {
+        var divSelector = e.currentTarget.getAttribute('data-selector');
+        if (!messageObjects.hasOwnProperty(divSelector)) {
+          messageObjects[divSelector] = Drupal.message(document.querySelector(divSelector));
+        }
+        return messageObjects[divSelector];
+      }
     }
   };
 
-})(jQuery, Drupal.message);
+})(jQuery);

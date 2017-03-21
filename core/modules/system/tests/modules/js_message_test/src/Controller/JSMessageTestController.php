@@ -19,41 +19,36 @@ class JSMessageTestController {
   public function messageLinks() {
     $links = [];
     foreach (JsMessageTestCases::getMessagesSelectors() as $messagesSelector) {
-      foreach (JsMessageTestCases::getContexts() as $context) {
-        foreach (JsMessageTestCases::getTypes() as $type) {
-          $links["show-$messagesSelector-$context-$type"] = [
-            'title' => "Show-$messagesSelector-$context-$type",
-            'url' => Url::fromRoute('js_message_test.links'),
-            'attributes' => [
-              'id' => "show-$messagesSelector-$context-$type",
-              'data-context' => $context,
-              'data-type' => $type,
-              'data-selector' => $messagesSelector,
-              'class' => ['show-link'],
-            ],
-          ];
-          $links["remove-$messagesSelector-$context-$type"] = [
-            'title' => "Remove-$messagesSelector-$context-$type",
-            'url' => Url::fromRoute('js_message_test.links'),
-            'attributes' => [
-              'id' => "remove-$messagesSelector-$context-$type",
-              'data-context' => $context,
-              'data-type' => $type,
-              'data-selector' => $messagesSelector,
-              'class' => ['remove-link'],
-            ],
-          ];
-        }
-        $links["remove-$context"] = [
-          'title' => "Remove-$context-all",
+      foreach (JsMessageTestCases::getTypes() as $type) {
+        $links["show-$messagesSelector-$type"] = [
+          'title' => "Show-$messagesSelector-$type",
           'url' => Url::fromRoute('js_message_test.links'),
           'attributes' => [
-            'id' => "remove-$context",
-            'data-context' => $context,
+            'id' => "show-$messagesSelector-$type",
+            'data-type' => $type,
+            'data-selector' => $messagesSelector,
+            'class' => ['show-link'],
+          ],
+        ];
+        $links["remove-$messagesSelector-$type"] = [
+          'title' => "Remove-$messagesSelector-$type",
+          'url' => Url::fromRoute('js_message_test.links'),
+          'attributes' => [
+            'id' => "remove-$messagesSelector-$type",
+            'data-type' => $type,
+            'data-selector' => $messagesSelector,
             'class' => ['remove-link'],
           ],
         ];
       }
+      $links["remove"] = [
+        'title' => "Remove-all",
+        'url' => Url::fromRoute('js_message_test.links'),
+        'attributes' => [
+          'id' => "remove",
+          'class' => ['remove-link'],
+        ],
+      ];
     }
 
     $links['show-multi'] = [
