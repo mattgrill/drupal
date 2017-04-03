@@ -1027,22 +1027,52 @@
       // $(response.data) as new HTML rather than a CSS selector. Also, if
       // response.data contains top-level text nodes, they get lost with either
       // $(response.data) or $('<div></div>').replaceWith(response.data).
-      var $new_content_wrapped = $('<div></div>').html(response.data);
-      var $new_content = $new_content_wrapped.contents();
+      // attachBehaviors() can, for the same reason, not be called with a
+      // context object that includes top-level text nodes. Therefore text nodes
+      // will be wrapped with a <span> element. This also gives themers the
+      // possibility to style the response.
 
-      // For legacy reasons, the effects processing code assumes that
-      // $new_content consists of a single top-level element. Also, it has not
-      // been sufficiently tested whether attachBehaviors() can be successfully
-      // called with a context object that includes top-level text nodes.
-      // However, to give developers full control of the HTML appearing in the
-      // page, and to enable Ajax content to be inserted in places where <div>
-      // elements are not allowed (e.g., within <table>, <tr>, and <span>
-      // parents), we check if the new content satisfies the requirement
-      // of a single top-level element, and only use the container <div> created
-      // above when it doesn't. For more information, please see
-      // https://www.drupal.org/node/736066.
-      if ($new_content.length !== 1 || $new_content.get(0).nodeType !== 1) {
-        $new_content = $new_content_wrapped;
+      var $responseDataWrapped = $('<div></div>').html(response.data);
+      var $new_content = $('<div></div>');
+      var elementsReturnedCount = $responseDataWrapped.contents().length;
+
+      // If only one node element is returned skip wrap processing.
+      if (elementsReturnedCount === 1 && response.data === Node.ELEMENT_NODE) {
+        $new_content = response.data;
+      }
+      else {
+        var $intermediateWrapper = null;
+
+        $responseDataWrapped.contents().each(function (index, value) {
+          // Make sure all not-element nodes are wrapped.
+          if (value.nodeType !== Node.ELEMENT_NODE) {
+            if ($intermediateWrapper) {
+              $intermediateWrapper.append(value);
+            }
+            // Make an exception for comments that are not after a text node.
+            // This is especially helpful for when theme debugging is turned on.
+            else if (value.nodeType === Node.COMMENT_NODE) {
+              $new_content.append(value);
+            }
+            // Only create a wrapper if there is more than whitespace.
+            else if ($.trim(value.nodeValue).length) {
+              $intermediateWrapper = $('<span></span>');
+              $intermediateWrapper.append(value);
+            }
+          }
+          else {
+            $new_content.append($intermediateWrapper, value);
+            $intermediateWrapper = null;
+          }
+
+          // There are no other elements to process anymore, so add the
+          // intermediate wrapper to the content if present.
+          if (index === elementsReturnedCount - 1 && $intermediateWrapper) {
+            $new_content.append($intermediateWrapper);
+          }
+        });
+
+        $new_content = $new_content.contents();
       }
 
       // If removing content from the wrapper, detach behaviors first.
@@ -1053,7 +1083,10 @@
         case 'empty':
         case 'remove':
           settings = response.settings || ajax.settings || drupalSettings;
-          Drupal.detachBehaviors($wrapper.get(0), settings);
+          // Detach behaviors of all the to be removed element nodes.
+          $wrapper.children().each(function () {
+            Drupal.detachBehaviors(this, settings);
+          });
       }
 
       // Add the new content to the page.
@@ -1081,7 +1114,12 @@
       if ($new_content.parents('html').length > 0) {
         // Apply any settings from the returned JSON if available.
         settings = response.settings || ajax.settings || drupalSettings;
-        Drupal.attachBehaviors($new_content.get(0), settings);
+        // Attach behaviors to all element nodes.
+        $new_content.each(function () {
+          if (this.nodeType === Node.ELEMENT_NODE) {
+            Drupal.attachBehaviors(this, settings);
+          }
+        });
       }
     },
 

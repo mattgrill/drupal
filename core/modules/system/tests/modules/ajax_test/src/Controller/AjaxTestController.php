@@ -43,6 +43,84 @@ class AjaxTestController {
   }
 
   /**
+   * Example content for testing whether response should be wrapped in div.
+   *
+   * @param string $type
+   *   Type of response.
+   *
+   * @return array
+   *   Renderable array of AJAX response contents.
+   */
+  public static function renderTypes($type) {
+    switch ($type) {
+      case 'pre-wrapped':
+        $markup = '<div class="' . $type . '">' . $type . '</div>';
+        break;
+
+      case 'pre-wrapped-leading-whitespace':
+        $markup = ' <div class="' . $type . '">' . $type . '</div>';
+        break;
+
+      case 'not-wrapped':
+        $markup = $type;
+        break;
+
+      case 'comment-not-wrapped':
+        $markup = '<!-- COMMENT --><div class="' . $type . '">' . $type . '</div>';
+        break;
+
+      case 'mixed':
+        $markup = ' foo <!-- COMMENT -->  foo bar<div class="a class"><p>some string</p></div> additional not wrapped strings, <!-- ANOTHER COMMENT --> <p>final string</p>';
+        break;
+    }
+
+    $content = [
+      '#title' => '<em>AJAX Dialog & contents</em>',
+      'content' => [
+        '#type' => 'inline_template',
+        '#template' => !empty($markup) ? $markup : '',
+      ],
+    ];
+
+    return $content;
+  }
+
+  /**
+   * Returns a render array of links that directly Drupal.ajax().
+   */
+  public function insertLinks() {
+    $types = [
+      'pre-wrapped',
+      'pre-wrapped-leading-whitespace',
+      'not-wrapped',
+      'comment-not-wrapped',
+      'mixed',
+    ];
+
+    $build['links'] = [
+      'ajax_target' => [
+        '#markup' => '<div id="ajax-target">Target</div>',
+      ],
+      'links' => [
+        '#theme' => 'links',
+        '#attached' => ['library' => ['ajax_test/ajax_insert']],
+      ],
+    ];
+
+    foreach ($types as $type) {
+      $build['links']['links']['#links'][$type] = [
+        'title' => "Link $type",
+        'url' => Url::fromRoute('ajax_test.ajax_render_types', ['type' => $type]),
+        'attributes' => [
+          'class' => ['ajax-insert'],
+        ],
+      ];
+    }
+
+    return $build;
+  }
+
+  /**
    * Returns a render array that will be rendered by AjaxRenderer.
    *
    * Verifies that the response incorporates JavaScript settings generated
