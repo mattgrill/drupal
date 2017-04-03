@@ -89,6 +89,11 @@ class AjaxTestController {
    * Returns a render array of links that directly Drupal.ajax().
    */
   public function insertLinks() {
+    $methods = [
+      'html',
+      'replaceWith',
+      'replaceAll',
+    ];
     $types = [
       'pre-wrapped',
       'pre-wrapped-leading-whitespace',
@@ -106,17 +111,18 @@ class AjaxTestController {
         '#attached' => ['library' => ['ajax_test/ajax_insert']],
       ],
     ];
-
-    foreach ($types as $type) {
-      $build['links']['links']['#links'][$type] = [
-        'title' => "Link $type",
-        'url' => Url::fromRoute('ajax_test.ajax_render_types', ['type' => $type]),
-        'attributes' => [
-          'class' => ['ajax-insert'],
-        ],
-      ];
+    foreach ($methods as $method) {
+      foreach ($types as $type) {
+        $build['links']['links']['#links']["$method-$type"] = [
+          'title' => "Link $method $type",
+          'url' => Url::fromRoute('ajax_test.ajax_render_types', ['type' => $type]),
+          'attributes' => [
+            'class' => ['ajax-insert'],
+            'data-method' => $method,
+          ],
+        ];
+      }
     }
-
     return $build;
   }
 

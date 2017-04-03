@@ -15,7 +15,7 @@
           wrapper: 'ajax-target',
           base: false,
           element: false,
-          method: 'html'
+          method: event.currentTarget.getAttribute('data-method')
         };
         var myAjaxObject = Drupal.ajax(ajaxSettings);
         myAjaxObject.execute();
