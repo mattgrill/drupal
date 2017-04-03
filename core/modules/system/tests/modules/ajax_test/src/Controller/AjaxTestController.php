@@ -51,34 +51,12 @@ class AjaxTestController {
    * @return array
    *   Renderable array of AJAX response contents.
    */
-  public static function renderTypes($type) {
-    switch ($type) {
-      case 'pre-wrapped':
-        $markup = '<div class="' . $type . '">' . $type . '</div>';
-        break;
-
-      case 'pre-wrapped-leading-whitespace':
-        $markup = ' <div class="' . $type . '">' . $type . '</div>';
-        break;
-
-      case 'not-wrapped':
-        $markup = $type;
-        break;
-
-      case 'comment-not-wrapped':
-        $markup = '<!-- COMMENT --><div class="' . $type . '">' . $type . '</div>';
-        break;
-
-      case 'mixed':
-        $markup = ' foo <!-- COMMENT -->  foo bar<div class="a class"><p>some string</p></div> additional not wrapped strings, <!-- ANOTHER COMMENT --> <p>final string</p>';
-        break;
-    }
-
+  public function renderTypes($type) {
     $content = [
       '#title' => '<em>AJAX Dialog & contents</em>',
       'content' => [
         '#type' => 'inline_template',
-        '#template' => !empty($markup) ? $markup : '',
+        '#template' => $this->getRenderTypes()[$type],
       ],
     ];
 
@@ -92,14 +70,6 @@ class AjaxTestController {
     $methods = [
       'html',
       'replaceWith',
-      'replaceAll',
-    ];
-    $types = [
-      'pre-wrapped',
-      'pre-wrapped-leading-whitespace',
-      'not-wrapped',
-      'comment-not-wrapped',
-      'mixed',
     ];
 
     $build['links'] = [
@@ -112,7 +82,7 @@ class AjaxTestController {
       ],
     ];
     foreach ($methods as $method) {
-      foreach ($types as $type) {
+      foreach (array_keys($this->getRenderTypes()) as $type) {
         $build['links']['links']['#links']["$method-$type"] = [
           'title' => "Link $method $type",
           'url' => Url::fromRoute('ajax_test.ajax_render_types', ['type' => $type]),
@@ -306,4 +276,21 @@ class AjaxTestController {
     return $response;
   }
 
+  /**
+   * Render types.
+   *
+   * @return array
+   *   Render types.
+   */
+  protected function getRenderTypes() {
+    return [
+      'pre-wrapped' => '<div class="pre-wrapped">pre-wrapped</div>',
+      'pre-wrapped-leading-whitespace' => ' <div class="pre-wrapped-leading-whitespace">pre-wrapped-leading-whitespace</div>',
+      'not-wrapped' => 'not-wrapped',
+      'comment-not-wrapped' => '<!-- COMMENT --><div class="comment-not-wrapped">comment-not-wrapped</div>',
+      'mixed' => ' foo <!-- COMMENT -->  foo bar<div class="a class"><p>some string</p></div> additional not wrapped strings, <!-- ANOTHER COMMENT --> <p>final string</p>',
+    ];
+  }
+
 }
+
