@@ -108,7 +108,7 @@
       .find('.contextual');
 
     // Early-return when there's no nesting.
-    if ($contextuals.length === 1) {
+    if ($contextuals.length <= 1) {
       return;
     }
 

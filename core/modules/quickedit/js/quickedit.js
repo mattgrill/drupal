@@ -366,14 +366,24 @@
     // [data-quickedit-entity-id] element's data-quickedit-entity-instance-id
     // attribute.
     var entityElementSelector = '[data-quickedit-entity-id="' + entityID + '"]';
-    var entityElement = $(fieldElement).closest(entityElementSelector);
+    var $entityElement = $(entityElementSelector);
+
+    // If there are no elements returned from `entityElementSelector`
+    // throw an error. Check the browser console for this message.
+    if (!$entityElement.length) {
+      throw Drupal.t('The field [data-quickedit-field-id="@fieldID"] parent attribute [data-quickedit-entity-id] is missing.', {
+        '@fieldID': fieldID
+      });
+    }
+
+    var entityElement = $(fieldElement).closest($entityElement);
     // In the case of a full entity view page, the entity title is rendered
     // outside of "the entity DOM node": it's rendered as the page title. So in
     // this case, we find the lowest common parent element (deepest in the tree)
     // and consider that the entity element.
     if (entityElement.length === 0) {
-      var $lowestCommonParent = $(entityElementSelector).parents().has(fieldElement).first();
-      entityElement = $lowestCommonParent.find(entityElementSelector);
+      var $lowestCommonParent = $entityElement.parents().has(fieldElement).first();
+      entityElement = $lowestCommonParent.find($entityElement);
     }
     var entityInstanceID = entityElement
       .get(0)
