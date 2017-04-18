@@ -1,0 +1,6 @@
+name: 'Quickedit test theme.'
+type: theme
+description: 'Test theme for Quickedit error.'
+version: VERSION
+core: 8.x
+base theme: classy
