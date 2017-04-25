@@ -1,2 +1,1 @@
-(function(){'use strict';(function(a,b){b.behaviors.detailsAria={attach:function(){a('body').once('detailsAria').on('click.detailsAria','summary',function(d){var e=a(d.currentTarget),f='open'===a(d.currentTarget.parentNode).attr('open')?'false':'true';e.attr({'aria-expanded':f,'aria-pressed':f})})}}})(jQuery,Drupal)})();
-//# sourceMappingURL=details-aria.js.map
+(function(a,b){b.behaviors.detailsAria={attach:function attach(){a('body').once('detailsAria').on('click.detailsAria','summary',function(c){var d=a(c.currentTarget),e='open'===a(c.currentTarget.parentNode).attr('open')?'false':'true';d.attr({'aria-expanded':e,'aria-pressed':e})})}}})(jQuery,Drupal);
