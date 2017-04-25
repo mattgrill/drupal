@@ -3,7 +3,7 @@
  * Attaches behaviors for Drupal's active link marking.
  */
 
-(((Drupal, drupalSettings) => {
+((Drupal, drupalSettings) => {
   /**
    * Append is-active class.
    *
@@ -61,4 +61,4 @@
       }
     },
   };
-}))(Drupal, drupalSettings);
+})(Drupal, drupalSettings);
