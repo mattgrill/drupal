@@ -4,25 +4,19 @@
   "license": "GPL-2.0",
   "private": true,
   "scripts": {
-    "build:js": "node ./scripts/js/babel-es6-build.js",
+    "build:js": "BABEL_ENV=production node ./scripts/js/babel-es6-build.js",
     "watch:js": "node ./scripts/js/babel-es6-watch.js",
     "lint:core-js": "node ./node_modules/eslint/bin/eslint.js --ext=.es6.js . --fix || exit 0"
   },
   "devDependencies": {
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-preset-env": "^1.3.3",
+    "babel-preset-env": "1.3.3",
     "chokidar": "1.6.1",
     "eslint": "3.19.0",
     "eslint-config-airbnb": "14.1.0",
     "eslint-plugin-import": "2.2.0",
     "eslint-plugin-jsx-a11y": "4.0.0",
     "eslint-plugin-react": "6.10.3",
-    "glob": "7.1.1",
-    "rollup": "^0.41.6",
-    "rollup-plugin-babel": "^2.7.1",
-    "rollup-plugin-babili": "^2.0.0",
-    "rollup-plugin-commonjs": "^8.0.2",
-    "rollup-plugin-node-resolve": "^3.0.0"
+    "glob": "7.1.1"
   },
   "babel": {
     "presets": [
@@ -39,8 +33,10 @@
         }
       ]
     ],
-    "plugins": [
-      "external-helpers"
-    ]
+    "env": {
+      "production": {
+        "presets": ["babili"]
+      }
+    }
   }
 }
