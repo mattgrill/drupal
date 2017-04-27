@@ -424,11 +424,11 @@ abstract class EntityResourceTestBase extends ResourceTestBase {
     if ($this->entity->getEntityType()->getLinkTemplates()) {
       $this->assertArrayHasKey('Link', $response->getHeaders());
       $link_relation_type_manager = $this->container->get('plugin.manager.link_relation_type');
-      $expected_link_relation_headers = array_map(function ($rel) use ($link_relation_type_manager) {
-        $definition = $link_relation_type_manager->getDefinition($rel, FALSE);
-        return (!empty($definition['uri']))
-          ? $definition['uri']
-          : $rel;
+      $expected_link_relation_headers = array_map(function ($relation_name) use ($link_relation_type_manager) {
+        $link_relation_type = $link_relation_type_manager->createInstance($relation_name);
+        return $link_relation_type->isRegistered()
+          ? $link_relation_type->getRegisteredName()
+          : $link_relation_type->getExtensionUri();
       }, array_keys($this->entity->getEntityType()->getLinkTemplates()));
       $parse_rel_from_link_header = function ($value) use ($link_relation_type_manager) {
         $matches = [];
@@ -757,6 +757,8 @@ abstract class EntityResourceTestBase extends ResourceTestBase {
 
 
     // 201 for well-formed request.
+    // Delete the first created entity in case there is a uniqueness constraint.
+    $this->entityStorage->load(static::$firstCreatedEntityId)->delete();
     $response = $this->request('POST', $url, $request_options);
     $this->assertResourceResponse(201, FALSE, $response);
     if ($has_canonical_url) {
@@ -900,19 +902,15 @@ abstract class EntityResourceTestBase extends ResourceTestBase {
 
 
     // DX: 403 when sending PATCH request with read-only fields.
-    // First send all fields (the "maximum normalization"). Assert the expected
-    // error message for the first PATCH-protected field. Remove that field from
-    // the normalization, send another request, assert the next PATCH-protected
-    // field error message. And so on.
-    $max_normalization = $this->getNormalizedPatchEntity() + $this->serializer->normalize($this->entity, static::$format);
-    for ($i = 0; $i < count(static::$patchProtectedFieldNames); $i++) {
-      $max_normalization = $this->removeFieldsFromNormalization($max_normalization, array_slice(static::$patchProtectedFieldNames, 0, $i));
-      $request_options[RequestOptions::BODY] = $this->serializer->serialize($max_normalization, static::$format);
+    foreach (static::$patchProtectedFieldNames as $field_name) {
+      $normalization = $this->getNormalizedPatchEntity() + [$field_name => [['value' => $this->randomString()]]];
+      $request_options[RequestOptions::BODY] = $this->serializer->serialize($normalization, static::$format);
       $response = $this->request('PATCH', $url, $request_options);
-      $this->assertResourceErrorResponse(403, "Access denied on updating field '" . static::$patchProtectedFieldNames[$i] . "'.", $response);
+      $this->assertResourceErrorResponse(403, "Access denied on updating field '$field_name'.", $response);
     }
 
     // 200 for well-formed request that sends the maximum number of fields.
+    $max_normalization = $this->getNormalizedPatchEntity() + $this->serializer->normalize($this->entity, static::$format);
     $max_normalization = $this->removeFieldsFromNormalization($max_normalization, static::$patchProtectedFieldNames);
     $request_options[RequestOptions::BODY] = $this->serializer->serialize($max_normalization, static::$format);
     $response = $this->request('PATCH', $url, $request_options);
