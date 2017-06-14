@@ -33,6 +33,15 @@ class Callbacks {
   }
 
   /**
+   * Ajax callback confirm image button submitted.
+   */
+  public function imageButtonCallback($form, FormStateInterface $form_state) {
+    $response = new AjaxResponse();
+    $response->addCommand(new HtmlCommand('#ajax_image_button_result', "Something witty!"));
+    return $response;
+  }
+
+  /**
    * Ajax callback triggered by the checkbox in a #group.
    */
   public function checkboxGroupCallback($form, FormStateInterface $form_state) {
