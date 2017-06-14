@@ -1,13 +1,14 @@
 <?php
 
-
 namespace Drupal\ajax_forms_test\Form;
-
 
 use Drupal\ajax_forms_test\Callbacks;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Form builder: Builds a form that has image button with an ajax callback.
+ */
 class AjaxFormsTestImageButtonForm extends FormBase {
 
   /**
@@ -16,16 +17,9 @@ class AjaxFormsTestImageButtonForm extends FormBase {
   public function getFormId() {
     return 'ajax_forms_test_image_button_form';
   }
+
   /**
-   * Form constructor.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   *
-   * @return array
-   *   The form structure.
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $object = new Callbacks();
@@ -45,14 +39,10 @@ class AjaxFormsTestImageButtonForm extends FormBase {
   }
 
   /**
-   * Form submission handler.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // TODO: Implement submitForm() method.
+    // No submit code needed.
   }
+
 }
