@@ -53,7 +53,8 @@
           "Drupal\\Core\\Composer\\Composer::ensureHtaccess"
         ],
         "post-package-install": "Drupal\\Core\\Composer\\Composer::vendorTestCodeCleanup",
-        "post-package-update": "Drupal\\Core\\Composer\\Composer::vendorTestCodeCleanup"
+        "post-package-update": "Drupal\\Core\\Composer\\Composer::vendorTestCodeCleanup",
+        "post-install-cmd": "cd core && yarn && yarn run build:js"
     },
     "repositories": [
         {
