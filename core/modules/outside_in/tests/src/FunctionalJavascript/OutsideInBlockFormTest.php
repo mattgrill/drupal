@@ -139,9 +139,27 @@ class OutsideInBlockFormTest extends OutsideInJavascriptTestBase {
       $this->waitForOffCanvasToClose();
       $this->getSession()->wait(100);
       $this->assertEditModeDisabled();
+
       $web_assert->elementTextContains('css', '#drupal-live-announce', 'Exited edit mode.');
       $web_assert->elementTextNotContains('css', '.contextual-toolbar-tab button', 'Editing');
       $web_assert->elementAttributeNotContains('css', '.dialog-off-canvas__main-canvas', 'class', 'js-outside-in-edit-mode');
+
+      // Second pass to make sure we aren't breaking on null elements in the
+      // ajax.insances array
+      $this->enableEditMode();
+
+      // Open block form by clicking a element inside the block.
+      // This confirms that default action for links and form elements is
+      // suppressed.
+      $this->openBlockForm("$block_selector {$element_selector}", $block_selector);
+      $web_assert->elementTextContains('css', '.contextual-toolbar-tab button', 'Editing');
+      $web_assert->elementAttributeContains('css', '.dialog-off-canvas__main-canvas', 'class', 'js-outside-in-edit-mode');
+      // Simulate press the Escape key.
+      $this->getSession()->executeScript('jQuery("body").trigger(jQuery.Event("keyup", { keyCode: 27 }));');
+      $this->waitForOffCanvasToClose();
+      $this->getSession()->wait(100);
+      $this->assertEditModeDisabled();
+
       // Delete the block that was placed for the current theme.
       $block->delete();
     }
