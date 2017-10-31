@@ -173,7 +173,7 @@ class AjaxTest extends JavascriptTestBase {
     // processed correctly.
     $test_cases['pre_wrapped_whitespace'] = [
       'pre-wrapped-whitespace',
-      ' <div class="pre-wrapped-whitespace processed">pre-wrapped-whitespace</div>',
+      " <div class=\"pre-wrapped-whitespace processed\">pre-wrapped-whitespace</div>\n",
     ];
     // Test that not wrapped response data (text node) is inserted wrapped and
     // all top-level node elements (context) are processed correctly.
