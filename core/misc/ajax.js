@@ -478,18 +478,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
   Drupal.AjaxCommands = function () {};
   Drupal.AjaxCommands.prototype = {
-    insert: function insert(ajax, response, status) {
+    insert: function insert(ajax, response) {
       var $wrapper = response.selector ? $(response.selector) : $(ajax.wrapper);
       var method = response.method || ajax.method;
       var effect = ajax.getEffect(response);
-      var settings = void 0;
 
-      var $new_content_wrapped = $('<div></div>').html(response.data);
-      var $new_content = $new_content_wrapped.contents();
+      var settings = response.settings || ajax.settings || drupalSettings;
 
-      if ($new_content.length !== 1 || $new_content.get(0).nodeType !== 1) {
-        $new_content = $new_content_wrapped;
-      }
+      var $newContent = $($.parseHTML(response.data, true));
 
       switch (method) {
         case 'html':
@@ -497,27 +493,33 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         case 'replaceAll':
         case 'empty':
         case 'remove':
-          settings = response.settings || ajax.settings || drupalSettings;
           Drupal.detachBehaviors($wrapper.get(0), settings);
+          break;
+        default:
+          break;
       }
 
-      $wrapper[method]($new_content);
+      $wrapper[method]($newContent);
 
       if (effect.showEffect !== 'show') {
-        $new_content.hide();
+        $newContent.hide();
       }
 
-      if ($new_content.find('.ajax-new-content').length > 0) {
-        $new_content.find('.ajax-new-content').hide();
-        $new_content.show();
-        $new_content.find('.ajax-new-content')[effect.showEffect](effect.showSpeed);
+      var $ajaxNewContent = $newContent.find('.ajax-new-content');
+      if ($ajaxNewContent.length) {
+        $ajaxNewContent.hide();
+        $newContent.show();
+        $ajaxNewContent[effect.showEffect](effect.showSpeed);
       } else if (effect.showEffect !== 'show') {
-        $new_content[effect.showEffect](effect.showSpeed);
+        $newContent[effect.showEffect](effect.showSpeed);
       }
 
-      if ($new_content.parents('html').length > 0) {
-        settings = response.settings || ajax.settings || drupalSettings;
-        Drupal.attachBehaviors($new_content.get(0), settings);
+      if ($newContent.parents('html').length) {
+        $newContent.each(function (index, element) {
+          if (element.nodeType === Node.ELEMENT_NODE) {
+            Drupal.attachBehaviors(element, settings);
+          }
+        });
       }
     },
     remove: function remove(ajax, response, status) {

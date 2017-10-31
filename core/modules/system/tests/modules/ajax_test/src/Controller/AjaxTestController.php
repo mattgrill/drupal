@@ -43,6 +43,94 @@ class AjaxTestController {
   }
 
   /**
+   * Example content for testing whether response should be wrapped in div.
+   *
+   * @param string $type
+   *   Type of response.
+   *
+   * @return array
+   *   Renderable array of AJAX response contents.
+   */
+  public function renderTypes($type) {
+    $content = [
+      '#title' => '<em>AJAX Dialog & contents</em>',
+      'content' => [
+        '#type' => 'inline_template',
+        '#template' => $this->getRenderTypes()[$type],
+      ],
+    ];
+
+    return $content;
+  }
+
+  /**
+   * Returns a render array of links that directly Drupal.ajax().
+   */
+  public function insertLinksBlockWrapper() {
+    $methods = [
+      'html',
+      'replaceWith',
+    ];
+
+    $build['links'] = [
+      'ajax_target' => [
+        '#markup' => '<div id="ajax-target" data-drupal-ajax-target="">Target</div>',
+      ],
+      'links' => [
+        '#theme' => 'links',
+        '#attached' => ['library' => ['ajax_test/ajax_insert']],
+      ],
+    ];
+    foreach ($methods as $method) {
+      foreach (array_keys($this->getRenderTypes()) as $type) {
+        $class = 'ajax-insert';
+        $build['links']['links']['#links']["$method-$type"] = [
+          'title' => "Link $method $type",
+          'url' => Url::fromRoute('ajax_test.ajax_render_types', ['type' => $type]),
+          'attributes' => [
+            'class' => [$class],
+            'data-method' => $method,
+          ],
+        ];
+      }
+    }
+    return $build;
+  }
+
+  /**
+   * Returns a render array of links that directly Drupal.ajax().
+   */
+  public function insertLinksInlineWrapper() {
+    $methods = [
+      'html',
+      'replaceWith',
+    ];
+
+    $build['links'] = [
+      'ajax_target' => [
+        '#markup' => '<span id="ajax-target-inline" data-drupal-ajax-target="">Target inline</span>',
+      ],
+      'links' => [
+        '#theme' => 'links',
+        '#attached' => ['library' => ['ajax_test/ajax_insert']],
+      ],
+    ];
+    foreach ($methods as $method) {
+      foreach (array_keys($this->getRenderTypes()) as $type) {
+        $class = 'ajax-insert-inline';
+        $build['links']['links']['#links']["$method-$type"] = [
+          'title' => "Link $method $type",
+          'url' => Url::fromRoute('ajax_test.ajax_render_types', ['type' => $type]),
+          'attributes' => [
+            'class' => [$class],
+            'data-method' => $method,
+          ],
+        ];
+      }
+    }
+    return $build;
+  }
+  /**
    * Returns a render array that will be rendered by AjaxRenderer.
    *
    * Verifies that the response incorporates JavaScript settings generated
@@ -220,6 +308,29 @@ class AjaxTestController {
     $response = new AjaxResponse();
     $response->addCommand(new CloseDialogCommand('#ajax-test-dialog-wrapper-1'));
     return $response;
+  }
+
+  /**
+   * Render types.
+   *
+   * @return array
+   *   Render types.
+   */
+  protected function getRenderTypes() {
+    return [
+      'pre-wrapped-div' => '<div class="pre-wrapped">pre-wrapped<script> var test;</script></div>',
+      'pre-wrapped-span' => '<span class="pre-wrapped">pre-wrapped<script> var test;</script></span>',
+      'pre-wrapped-whitespace' => ' <div class="pre-wrapped-whitespace">pre-wrapped-whitespace</div>' . "\r\n",
+      'not-wrapped' => 'not-wrapped',
+      'comment-string-not-wrapped' => '<!-- COMMENT -->comment-string-not-wrapped',
+      'comment-not-wrapped' => '<!-- COMMENT --><div class="comment-not-wrapped">comment-not-wrapped</div>',
+      'mixed' => ' foo <!-- COMMENT -->  foo bar<div class="a class"><p>some string</p></div> additional not wrapped strings, <!-- ANOTHER COMMENT --> <p>final string</p>',
+      'top-level-only' => '<div>element #1</div><div>element #2</div>',
+      'top-level-only-pre-whitespace' => ' <div>element #1</div><div>element #2</div> ',
+      'top-level-only-middle-whitespace-span' => '<span>element #1</span> <span>element #2</span>',
+      'top-level-only-middle-whitespace-div' => '<div>element #1</div> <div>element #2</div>',
+      'empty' => '',
+    ];
   }
 
 }

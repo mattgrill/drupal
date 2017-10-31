@@ -1021,39 +1021,19 @@
      *   A optional jQuery selector string.
      * @param {object} [response.settings]
      *   An optional array of settings that will be used.
-     * @param {number} [status]
-     *   The XMLHttpRequest status.
      */
-    insert(ajax, response, status) {
+    insert(ajax, response) {
       // Get information from the response. If it is not there, default to
       // our presets.
       const $wrapper = response.selector ? $(response.selector) : $(ajax.wrapper);
       const method = response.method || ajax.method;
       const effect = ajax.getEffect(response);
-      let settings;
 
-      // We don't know what response.data contains: it might be a string of text
-      // without HTML, so don't rely on jQuery correctly interpreting
-      // $(response.data) as new HTML rather than a CSS selector. Also, if
-      // response.data contains top-level text nodes, they get lost with either
-      // $(response.data) or $('<div></div>').replaceWith(response.data).
-      const $new_content_wrapped = $('<div></div>').html(response.data);
-      let $new_content = $new_content_wrapped.contents();
+      // Apply any settings from the returned JSON if available.
+      const settings = response.settings || ajax.settings || drupalSettings;
 
-      // For legacy reasons, the effects processing code assumes that
-      // $new_content consists of a single top-level element. Also, it has not
-      // been sufficiently tested whether attachBehaviors() can be successfully
-      // called with a context object that includes top-level text nodes.
-      // However, to give developers full control of the HTML appearing in the
-      // page, and to enable Ajax content to be inserted in places where <div>
-      // elements are not allowed (e.g., within <table>, <tr>, and <span>
-      // parents), we check if the new content satisfies the requirement
-      // of a single top-level element, and only use the container <div> created
-      // above when it doesn't. For more information, please see
-      // https://www.drupal.org/node/736066.
-      if ($new_content.length !== 1 || $new_content.get(0).nodeType !== 1) {
-        $new_content = $new_content_wrapped;
-      }
+      // Parse response.data into an element collection.
+      const $newContent = $($.parseHTML(response.data, true));
 
       // If removing content from the wrapper, detach behaviors first.
       switch (method) {
@@ -1062,36 +1042,42 @@
         case 'replaceAll':
         case 'empty':
         case 'remove':
-          settings = response.settings || ajax.settings || drupalSettings;
           Drupal.detachBehaviors($wrapper.get(0), settings);
+          break;
+        default:
+          break;
       }
 
       // Add the new content to the page.
-      $wrapper[method]($new_content);
+      $wrapper[method]($newContent);
 
       // Immediately hide the new content if we're using any effects.
       if (effect.showEffect !== 'show') {
-        $new_content.hide();
+        $newContent.hide();
       }
 
       // Determine which effect to use and what content will receive the
       // effect, then show the new content.
-      if ($new_content.find('.ajax-new-content').length > 0) {
-        $new_content.find('.ajax-new-content').hide();
-        $new_content.show();
-        $new_content.find('.ajax-new-content')[effect.showEffect](effect.showSpeed);
+      const $ajaxNewContent = $newContent.find('.ajax-new-content');
+      if ($ajaxNewContent.length) {
+        $ajaxNewContent.hide();
+        $newContent.show();
+        $ajaxNewContent[effect.showEffect](effect.showSpeed);
       }
       else if (effect.showEffect !== 'show') {
-        $new_content[effect.showEffect](effect.showSpeed);
+        $newContent[effect.showEffect](effect.showSpeed);
       }
 
       // Attach all JavaScript behaviors to the new content, if it was
       // successfully added to the page, this if statement allows
       // `#ajax['wrapper']` to be optional.
-      if ($new_content.parents('html').length > 0) {
-        // Apply any settings from the returned JSON if available.
-        settings = response.settings || ajax.settings || drupalSettings;
-        Drupal.attachBehaviors($new_content.get(0), settings);
+      if ($newContent.parents('html').length) {
+        // Attach behaviors to all element nodes.
+        $newContent.each((index, element) => {
+          if (element.nodeType === Node.ELEMENT_NODE) {
+            Drupal.attachBehaviors(element, settings);
+          }
+        });
       }
     },
 
