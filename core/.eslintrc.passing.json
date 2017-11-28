@@ -7,7 +7,6 @@
     "no-continue": "off",
     "new-cap": "off",
     "max-len": "off",
-    "default-case": "off",
-    "camelcase": "off"
+    "default-case": "off"
   }
 }

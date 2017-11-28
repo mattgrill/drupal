@@ -1,0 +1,6 @@
+name: 'JS ajax test'
+type: module
+description: ''
+package: Testing
+version: VERSION
+core: 8.x
