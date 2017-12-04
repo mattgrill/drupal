@@ -102,7 +102,7 @@
       var externalPlugins = format.editorSettings.drupalExternalPlugins;
 
       if (externalPlugins) {
-        Object.keys(externalPlugins).forEach(function (pluginName) {
+        Object.keys(externalPlugins || {}).forEach(function (pluginName) {
           CKEDITOR.plugins.addExternal(pluginName, externalPlugins[pluginName], '');
         });
         delete format.editorSettings.drupalExternalPlugins;

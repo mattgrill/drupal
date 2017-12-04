@@ -150,7 +150,7 @@
       const hiddenEditorConfig = this.model.get('hiddenEditorConfig');
       if (hiddenEditorConfig.drupalExternalPlugins) {
         const externalPlugins = hiddenEditorConfig.drupalExternalPlugins;
-        Object.keys(externalPlugins).forEach((pluginName) => {
+        Object.keys(externalPlugins || {}).forEach((pluginName) => {
           CKEDITOR.plugins.addExternal(pluginName, externalPlugins[pluginName], '');
         });
       }
@@ -322,7 +322,7 @@
         // changed, rebuild the CKEditor features metadata.
         .on('CKEditorPluginSettingsChanged.ckeditorAdmin', (event, settingsChanges) => {
           // Update hidden CKEditor configuration.
-          Object.keys(settingsChanges).forEach((key) => {
+          Object.keys(settingsChanges || {}).forEach((key) => {
             hiddenEditorConfig[key] = settingsChanges[key];
           });
 
@@ -331,7 +331,7 @@
             // Trigger a standardized text editor configuration event for each
             // feature that was modified by the configuration changes.
             const featuresMetadata = view.model.get('featuresMetadata');
-            Object.keys(features).forEach((name) => {
+            Object.keys(features || {}).forEach((name) => {
               const feature = features[name];
               if (featuresMetadata.hasOwnProperty(name) && !_.isEqual(featuresMetadata[name], feature)) {
                 Drupal.editorConfiguration.modifiedFeature(feature);

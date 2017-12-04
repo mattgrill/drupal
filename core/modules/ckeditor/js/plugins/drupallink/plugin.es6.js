@@ -34,7 +34,7 @@
 
   function getAttributes(editor, data) {
     const set = {};
-    Object.keys(data).forEach((attributeName) => {
+    Object.keys(data || {}).forEach((attributeName) => {
       set[attributeName] = data[attributeName];
     });
 
@@ -129,7 +129,7 @@
             }
             // Update the link properties.
             else if (linkElement) {
-              Object.keys(returnValues.attributes).forEach((attrName) => {
+              Object.keys(returnValues.attributes || {}).forEach((attrName) => {
                 // Update the property if a value is specified.
                 if (returnValues.attributes[attrName].length > 0) {
                   const value = returnValues.attributes[attrName];

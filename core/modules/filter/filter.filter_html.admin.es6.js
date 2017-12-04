@@ -139,7 +139,7 @@
 
       // Map the newly added Text Editor features to Drupal.FilterHtmlRule
       // objects (to allow comparing userTags with autoTags).
-      Object.keys(newFeatures).forEach((featureName) => {
+      Object.keys(newFeatures || {}).forEach((featureName) => {
         const feature = newFeatures[featureName];
         let featureRule;
         let filterRule;

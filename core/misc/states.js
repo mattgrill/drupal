@@ -21,7 +21,7 @@
 
       var _loop = function _loop(i) {
         config = JSON.parse($states[i].getAttribute('data-drupal-states'));
-        Object.keys(config).forEach(function (state) {
+        Object.keys(config || {}).forEach(function (state) {
           new states.Dependent({
             element: $($states[i]),
             state: states.State.sanitize(state),
@@ -46,7 +46,7 @@
     $.extend(this, { values: {}, oldValue: null }, args);
 
     this.dependees = this.getDependees();
-    Object.keys(this.dependees).forEach(function (selector) {
+    Object.keys(this.dependees || {}).forEach(function (selector) {
       _this.initializeDependee(selector, _this.dependees[selector]);
     });
   };
@@ -197,7 +197,7 @@
       if (typeof trigger === 'function') {
         trigger.call(window, this.element);
       } else {
-        Object.keys(trigger).forEach(function (event) {
+        Object.keys(trigger || {}).forEach(function (event) {
           _this2.defaultTrigger(event, trigger[event]);
         });
       }

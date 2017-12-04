@@ -70,7 +70,7 @@
     }
 
     function render(results) {
-      Object.keys(results).forEach(function (nodeID) {
+      Object.keys(results || {}).forEach(function (nodeID) {
         if ($placeholdersToUpdate.hasOwnProperty(nodeID)) {
           $placeholdersToUpdate[nodeID].attr('href', results[nodeID].first_new_comment_link).text(Drupal.formatPlural(results[nodeID].new_comment_count, '1 new comment', '@count new comments')).removeClass('hidden');
           show($placeholdersToUpdate[nodeID]);

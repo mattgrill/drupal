@@ -152,7 +152,7 @@ window.Drupal = { behaviors: {}, locale: {} };
     settings = settings || drupalSettings;
     const behaviors = Drupal.behaviors;
     // Execute all of them.
-    Object.keys(behaviors).forEach((i) => {
+    Object.keys(behaviors || {}).forEach((i) => {
       if (typeof behaviors[i].attach === 'function') {
         // Don't stop the execution of behaviors in case of an error.
         try {
@@ -212,7 +212,7 @@ window.Drupal = { behaviors: {}, locale: {} };
     trigger = trigger || 'unload';
     const behaviors = Drupal.behaviors;
     // Execute all of them.
-    Object.keys(behaviors).forEach((i) => {
+    Object.keys(behaviors || {}).forEach((i) => {
       if (typeof behaviors[i].detach === 'function') {
         // Don't stop the execution of behaviors in case of an error.
         try {
@@ -269,7 +269,7 @@ window.Drupal = { behaviors: {}, locale: {} };
     // Keep args intact.
     const processedArgs = {};
     // Transform arguments before inserting them.
-    Object.keys(args).forEach((key) => {
+    Object.keys(args || {}).forEach((key) => {
       switch (key.charAt(0)) {
         // Escaped only.
         case '@':
@@ -315,7 +315,7 @@ window.Drupal = { behaviors: {}, locale: {} };
     // If the array of keys is not passed then collect the keys from the args.
     if (!Array.isArray(keys)) {
       keys = [];
-      Object.keys(args).forEach(key => keys.push(key));
+      Object.keys(args || {}).forEach(key => keys.push(key));
 
       // Order the keys by the character length. The shortest one is the first.
       keys.sort((a, b) => a.length - b.length);

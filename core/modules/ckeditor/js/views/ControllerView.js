@@ -91,7 +91,7 @@
       var hiddenEditorConfig = this.model.get('hiddenEditorConfig');
       if (hiddenEditorConfig.drupalExternalPlugins) {
         var externalPlugins = hiddenEditorConfig.drupalExternalPlugins;
-        Object.keys(externalPlugins).forEach(function (pluginName) {
+        Object.keys(externalPlugins || {}).forEach(function (pluginName) {
           CKEDITOR.plugins.addExternal(pluginName, externalPlugins[pluginName], '');
         });
       }
@@ -196,13 +196,13 @@
         var configEvent = action === 'added' ? 'addedFeature' : 'removedFeature';
         Drupal.editorConfiguration[configEvent](feature);
       }).on('CKEditorPluginSettingsChanged.ckeditorAdmin', function (event, settingsChanges) {
-        Object.keys(settingsChanges).forEach(function (key) {
+        Object.keys(settingsChanges || {}).forEach(function (key) {
           hiddenEditorConfig[key] = settingsChanges[key];
         });
 
         getCKEditorFeatures(hiddenEditorConfig, function (features) {
           var featuresMetadata = view.model.get('featuresMetadata');
-          Object.keys(features).forEach(function (name) {
+          Object.keys(features || {}).forEach(function (name) {
             var feature = features[name];
             if (featuresMetadata.hasOwnProperty(name) && !_.isEqual(featuresMetadata[name], feature)) {
               Drupal.editorConfiguration.modifiedFeature(feature);

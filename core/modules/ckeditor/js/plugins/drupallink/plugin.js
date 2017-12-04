@@ -32,7 +32,7 @@
 
   function getAttributes(editor, data) {
     var set = {};
-    Object.keys(data).forEach(function (attributeName) {
+    Object.keys(data || {}).forEach(function (attributeName) {
       set[attributeName] = data[attributeName];
     });
 
@@ -109,7 +109,7 @@
 
               linkElement = getSelectedLink(editor);
             } else if (linkElement) {
-                Object.keys(returnValues.attributes).forEach(function (attrName) {
+                Object.keys(returnValues.attributes || {}).forEach(function (attrName) {
                   if (returnValues.attributes[attrName].length > 0) {
                     var value = returnValues.attributes[attrName];
                     linkElement.data('cke-saved-' + attrName, value);

@@ -181,7 +181,7 @@
          *   The HTTP status code.
          */
         success(response, status) {
-          Object.keys(response).forEach((i) => {
+          Object.keys(response || {}).forEach((i) => {
             if (response[i].command && this.commands[response[i].command]) {
               this.commands[response[i].command](this, response[i], status);
             }

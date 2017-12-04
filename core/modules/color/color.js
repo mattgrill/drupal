@@ -25,14 +25,14 @@
       var farb = $.farbtastic('.color-placeholder');
 
       var reference = settings.color.reference;
-      Object.keys(reference).forEach(function (color) {
+      Object.keys(reference || {}).forEach(function (color) {
         reference[color] = farb.RGBToHSL(farb.unpack(reference[color]));
       });
 
       var height = [];
       var width = [];
 
-      Object.keys(settings.gradients).forEach(function (i) {
+      Object.keys(settings.gradients || {}).forEach(function (i) {
         $('.color-preview').once('color').append('<div id="gradient-' + i + '"></div>');
         var gradient = $('.color-preview #gradient-' + i);
 
@@ -50,7 +50,7 @@
         var colorScheme = this.options[this.selectedIndex].value;
         if (colorScheme !== '' && schemes[colorScheme]) {
           colors = schemes[colorScheme];
-          Object.keys(colors).forEach(function (fieldName) {
+          Object.keys(colors || {}).forEach(function (fieldName) {
             callback($('#edit-palette-' + fieldName), colors[fieldName], false, true);
           });
           preview();

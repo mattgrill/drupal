@@ -36,7 +36,7 @@
         return $(field).val() === column;
       }
 
-      Object.keys(dependentColumns).forEach(function (index) {
+      Object.keys(dependentColumns || {}).forEach(function (index) {
         column = dependentColumns[index];
 
         if (!$changed) {

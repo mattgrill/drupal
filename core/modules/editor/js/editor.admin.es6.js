@@ -880,7 +880,7 @@
      * up-to-date.
      */
     update() {
-      Object.keys(Drupal.filterConfiguration.statuses).forEach((filterID) => {
+      Object.keys(Drupal.filterConfiguration.statuses || {}).forEach((filterID) => {
         // Update status.
         Drupal.filterConfiguration.statuses[filterID].active = $(`[name="filters[${filterID}][status]"]`).is(':checked');
 

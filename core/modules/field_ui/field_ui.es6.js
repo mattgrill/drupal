@@ -212,7 +212,7 @@
       // Separate keys and values.
       const rowNames = [];
       const ajaxElements = [];
-      Object.keys(rows).forEach((rowName) => {
+      Object.keys(rows || {}).forEach((rowName) => {
         rowNames.push(rowName);
         ajaxElements.push(rows[rowName]);
       });

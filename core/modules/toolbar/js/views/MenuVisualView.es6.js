@@ -23,7 +23,7 @@
     render() {
       const subtrees = this.model.get('subtrees');
       // Add subtrees.
-      Object.keys(subtrees).forEach((id) => {
+      Object.keys(subtrees || {}).forEach((id) => {
         this.$el
           .find(`#toolbar-link-${id}`)
           .once('toolbar-subtrees')

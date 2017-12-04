@@ -29,7 +29,7 @@
         data: { 'node_ids[]': nodeIDs },
         dataType: 'json',
         success: function success(results) {
-          Object.keys(results).forEach(function (nodeID) {
+          Object.keys(results || {}).forEach(function (nodeID) {
             storage.setItem('Drupal.history.' + currentUserID + '.' + nodeID, results[nodeID]);
           });
           callback();

@@ -38,7 +38,7 @@
         $select.children().remove();
 
         var totalOptions = 0;
-        Object.keys(options).forEach(function (machineName) {
+        Object.keys(options || {}).forEach(function (machineName) {
           $select.append($('<option ' + (machineName === selected ? ' selected="selected"' : '') + '></option>').val(machineName).text(options[machineName]));
           totalOptions++;
         });

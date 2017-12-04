@@ -408,7 +408,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     var elementParents = $(this.element).parents('[data-drupal-selector]').addBack().toArray();
 
     var focusChanged = false;
-    Object.keys(response).forEach(function (i) {
+    Object.keys(response || {}).forEach(function (i) {
       if (response[i].command && _this.commands[response[i].command]) {
         _this.commands[response[i].command](_this, response[i], status);
         if (response[i].command === 'invoke' && response[i].method === 'focus') {

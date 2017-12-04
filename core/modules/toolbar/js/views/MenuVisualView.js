@@ -15,7 +15,7 @@
 
       var subtrees = this.model.get('subtrees');
 
-      Object.keys(subtrees).forEach(function (id) {
+      Object.keys(subtrees || {}).forEach(function (id) {
         _this.$el.find('#toolbar-link-' + id).once('toolbar-subtrees').after(subtrees[id]);
       });
 

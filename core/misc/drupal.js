@@ -19,7 +19,7 @@ window.Drupal = { behaviors: {}, locale: {} };
     settings = settings || drupalSettings;
     var behaviors = Drupal.behaviors;
 
-    Object.keys(behaviors).forEach(function (i) {
+    Object.keys(behaviors || {}).forEach(function (i) {
       if (typeof behaviors[i].attach === 'function') {
         try {
           behaviors[i].attach(context, settings);
@@ -36,7 +36,7 @@ window.Drupal = { behaviors: {}, locale: {} };
     trigger = trigger || 'unload';
     var behaviors = Drupal.behaviors;
 
-    Object.keys(behaviors).forEach(function (i) {
+    Object.keys(behaviors || {}).forEach(function (i) {
       if (typeof behaviors[i].detach === 'function') {
         try {
           behaviors[i].detach(context, settings, trigger);
@@ -55,7 +55,7 @@ window.Drupal = { behaviors: {}, locale: {} };
   Drupal.formatString = function (str, args) {
     var processedArgs = {};
 
-    Object.keys(args).forEach(function (key) {
+    Object.keys(args || {}).forEach(function (key) {
       switch (key.charAt(0)) {
         case '@':
           processedArgs[key] = Drupal.checkPlain(args[key]);
@@ -81,7 +81,7 @@ window.Drupal = { behaviors: {}, locale: {} };
 
     if (!Array.isArray(keys)) {
       keys = [];
-      Object.keys(args).forEach(function (key) {
+      Object.keys(args || {}).forEach(function (key) {
         return keys.push(key);
       });
 

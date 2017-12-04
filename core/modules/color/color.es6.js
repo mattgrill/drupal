@@ -33,7 +33,7 @@
 
       // Decode reference colors to HSL.
       const reference = settings.color.reference;
-      Object.keys(reference).forEach((color) => {
+      Object.keys(reference || {}).forEach((color) => {
         reference[color] = farb.RGBToHSL(farb.unpack(reference[color]));
       });
 
@@ -41,7 +41,7 @@
       const height = [];
       const width = [];
       // Loop through all defined gradients.
-      Object.keys(settings.gradients).forEach((i) => {
+      Object.keys(settings.gradients || {}).forEach((i) => {
         // Add element to display the gradient.
         $('.color-preview').once('color').append(`<div id="gradient-${i}"></div>`);
         const gradient = $(`.color-preview #gradient-${i}`);
@@ -65,7 +65,7 @@
         if (colorScheme !== '' && schemes[colorScheme]) {
           // Get colors of active scheme.
           colors = schemes[colorScheme];
-          Object.keys(colors).forEach((fieldName) => {
+          Object.keys(colors || {}).forEach((fieldName) => {
             callback($(`#edit-palette-${fieldName}`), colors[fieldName], false, true);
           });
           preview();

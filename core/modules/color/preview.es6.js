@@ -38,7 +38,7 @@
       form.find('#text a, #text h2').css('color', form.find('.color-palette input[name="palette[link]"]').val());
 
       function gradientLineColor(i, element) {
-        Object.keys(accum).forEach((k) => {
+        Object.keys(accum || {}).forEach((k) => {
           accum[k] += delta[k];
         });
         element.style.backgroundColor = farb.pack(accum);
@@ -47,12 +47,12 @@
       // Set up gradients if there are some.
       let colorStart;
       let colorEnd;
-      Object.keys(settings.gradients).forEach((i) => {
+      Object.keys(settings.gradients || {}).forEach((i) => {
         colorStart = farb.unpack(form.find(`.color-palette input[name="palette[${settings.gradients[i].colors[0]}]"]`).val());
         colorEnd = farb.unpack(form.find(`.color-palette input[name="palette[${settings.gradients[i].colors[1]}]"]`).val());
         if (colorStart && colorEnd) {
           delta = [];
-          Object.keys(colorStart).forEach((colorStartKey) => {
+          Object.keys(colorStart || {}).forEach((colorStartKey) => {
             delta[colorStartKey] = (colorEnd[colorStartKey] - colorStart[colorStartKey]) / (settings.gradients[i].vertical ? height[i] : width[i]);
           });
           accum = colorStart;

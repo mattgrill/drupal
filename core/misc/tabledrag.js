@@ -16,7 +16,7 @@
         }
       }
 
-      Object.keys(settings.tableDrag).forEach(function (base) {
+      Object.keys(settings.tableDrag || {}).forEach(function (base) {
         initTableDrag($(context).find('#' + base).once('tabledrag'), base);
       });
     }
@@ -59,8 +59,8 @@
     this.windowHeight = 0;
 
     this.indentEnabled = false;
-    Object.keys(tableSettings).forEach(function (group) {
-      Object.keys(tableSettings[group]).forEach(function (n) {
+    Object.keys(tableSettings || {}).forEach(function (group) {
+      Object.keys(tableSettings[group] || {}).forEach(function (n) {
         if (tableSettings[group][n].relationship === 'parent') {
           _this.indentEnabled = true;
         }
@@ -120,7 +120,7 @@
     var hidden = void 0;
     var cell = void 0;
     var columnIndex = void 0;
-    Object.keys(this.tableSettings).forEach(function (group) {
+    Object.keys(this.tableSettings || {}).forEach(function (group) {
       for (var d in _this2.tableSettings[group]) {
         if (_this2.tableSettings[group].hasOwnProperty(d)) {
           var field = $table.find('.' + _this2.tableSettings[group][d].target).eq(0);
@@ -480,10 +480,10 @@
       if (self.rowObject.changed === true) {
         self.updateFields(droppedRow);
 
-        Object.keys(self.tableSettings).forEach(function (group) {
+        Object.keys(self.tableSettings || {}).forEach(function (group) {
           var rowSettings = self.rowSettings(group, droppedRow);
           if (rowSettings.relationship === 'group') {
-            Object.keys(self.rowObject.children).forEach(function (n) {
+            Object.keys(self.rowObject.children || {}).forEach(function (n) {
               self.updateField(self.rowObject.children[n], group);
             });
           }
@@ -573,7 +573,7 @@
   Drupal.tableDrag.prototype.updateFields = function (changedRow) {
     var _this3 = this;
 
-    Object.keys(this.tableSettings).forEach(function (group) {
+    Object.keys(this.tableSettings || {}).forEach(function (group) {
       _this3.updateField(changedRow, group);
     });
   };
@@ -928,7 +928,7 @@
   Drupal.tableDrag.prototype.row.prototype.removeIndentClasses = function () {
     var _this4 = this;
 
-    Object.keys(this.children).forEach(function (n) {
+    Object.keys(this.children || {}).forEach(function (n) {
       $(_this4.children[n]).find('.js-indentation').removeClass('tree-child').removeClass('tree-child-first').removeClass('tree-child-last').removeClass('tree-child-horizontal');
     });
   };

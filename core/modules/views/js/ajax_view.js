@@ -10,7 +10,7 @@
   Drupal.behaviors.ViewsAjaxView.attach = function () {
     if (drupalSettings && drupalSettings.views && drupalSettings.views.ajaxViews) {
       var ajaxViews = drupalSettings.views.ajaxViews;
-      Object.keys(ajaxViews).forEach(function (i) {
+      Object.keys(ajaxViews || {}).forEach(function (i) {
         Drupal.views.instances[i] = new Drupal.views.ajaxView(ajaxViews[i]);
       });
     }

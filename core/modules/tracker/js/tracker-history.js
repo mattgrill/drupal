@@ -87,7 +87,7 @@
       data: { 'node_ids[]': nodeIDs },
       dataType: 'json',
       success: function success(results) {
-        Object.keys(results).forEach(function (nodeID) {
+        Object.keys(results || {}).forEach(function (nodeID) {
           if (placeholdersToUpdate.hasOwnProperty(nodeID)) {
             var url = results[nodeID].first_new_comment_link;
             var text = Drupal.formatPlural(results[nodeID].new_comment_count, '1 new', '@count new');

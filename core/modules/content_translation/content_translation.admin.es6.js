@@ -47,7 +47,7 @@
 
       // A field that has many different translatable parts can also define one
       // or more columns that require all columns to be translatable.
-      Object.keys(dependentColumns).forEach((index) => {
+      Object.keys(dependentColumns || {}).forEach((index) => {
         column = dependentColumns[index];
 
         if (!$changed) {

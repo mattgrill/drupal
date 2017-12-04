@@ -873,7 +873,7 @@
     // Track if any command is altering the focus so we can avoid changing the
     // focus set by the Ajax command.
     let focusChanged = false;
-    Object.keys(response).forEach((i) => {
+    Object.keys(response || {}).forEach((i) => {
       if (response[i].command && this.commands[response[i].command]) {
         this.commands[response[i].command](this, response[i], status);
         if (response[i].command === 'invoke' && response[i].method === 'focus') {

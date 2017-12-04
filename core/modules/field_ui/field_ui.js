@@ -120,7 +120,7 @@
     AJAXRefreshRows: function AJAXRefreshRows(rows) {
       var rowNames = [];
       var ajaxElements = [];
-      Object.keys(rows).forEach(function (rowName) {
+      Object.keys(rows || {}).forEach(function (rowName) {
         rowNames.push(rowName);
         ajaxElements.push(rows[rowName]);
       });

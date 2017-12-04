@@ -332,7 +332,7 @@
     liveSettingParsers: {},
 
     update: function update() {
-      Object.keys(Drupal.filterConfiguration.statuses).forEach(function (filterID) {
+      Object.keys(Drupal.filterConfiguration.statuses || {}).forEach(function (filterID) {
         Drupal.filterConfiguration.statuses[filterID].active = $('[name="filters[' + filterID + '][status]"]').is(':checked');
 
         if (Drupal.filterConfiguration.liveSettingParsers[filterID]) {

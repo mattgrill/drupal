@@ -76,7 +76,7 @@
     _calculateAutoAllowedTags: function _calculateAutoAllowedTags(userAllowedTags, newFeatures) {
       var editorRequiredTags = {};
 
-      Object.keys(newFeatures).forEach(function (featureName) {
+      Object.keys(newFeatures || {}).forEach(function (featureName) {
         var feature = newFeatures[featureName];
         var featureRule = void 0;
         var filterRule = void 0;

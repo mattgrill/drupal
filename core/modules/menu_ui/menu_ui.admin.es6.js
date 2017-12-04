@@ -47,7 +47,7 @@
         $select.children().remove();
         // Add new options to dropdown. Keep a count of options for testing later.
         let totalOptions = 0;
-        Object.keys(options).forEach((machineName) => {
+        Object.keys(options || {}).forEach((machineName) => {
           $select.append(
             $(`<option ${machineName === selected ? ' selected="selected"' : ''}></option>`).val(machineName).text(options[machineName]),
           );

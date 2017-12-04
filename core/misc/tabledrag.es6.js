@@ -41,7 +41,7 @@
         }
       }
 
-      Object.keys(settings.tableDrag).forEach((base) => {
+      Object.keys(settings.tableDrag || {}).forEach((base) => {
         initTableDrag($(context).find(`#${base}`).once('tabledrag'), base);
       });
     },
@@ -170,8 +170,8 @@
      * @type {bool}
      */
     this.indentEnabled = false;
-    Object.keys(tableSettings).forEach((group) => {
-      Object.keys(tableSettings[group]).forEach((n) => {
+    Object.keys(tableSettings || {}).forEach((group) => {
+      Object.keys(tableSettings[group] || {}).forEach((n) => {
         if (tableSettings[group][n].relationship === 'parent') {
           this.indentEnabled = true;
         }
@@ -258,7 +258,7 @@
     let hidden;
     let cell;
     let columnIndex;
-    Object.keys(this.tableSettings).forEach((group) => {
+    Object.keys(this.tableSettings || {}).forEach((group) => {
       // Find the first field in this group.
       // eslint-disable-next-line no-restricted-syntax
       for (const d in this.tableSettings[group]) {
@@ -769,10 +769,10 @@
 
         // If a setting exists for affecting the entire group, update all the
         // fields in the entire dragged group.
-        Object.keys(self.tableSettings).forEach((group) => {
+        Object.keys(self.tableSettings || {}).forEach((group) => {
           const rowSettings = self.rowSettings(group, droppedRow);
           if (rowSettings.relationship === 'group') {
-            Object.keys(self.rowObject.children).forEach((n) => {
+            Object.keys(self.rowObject.children || {}).forEach((n) => {
               self.updateField(self.rowObject.children[n], group);
             });
           }
@@ -916,7 +916,7 @@
    *   DOM object for the row that was just dropped.
    */
   Drupal.tableDrag.prototype.updateFields = function (changedRow) {
-    Object.keys(this.tableSettings).forEach((group) => {
+    Object.keys(this.tableSettings || {}).forEach((group) => {
       // Each group may have a different setting for relationship, so we find
       // the source rows for each separately.
       this.updateField(changedRow, group);
@@ -1476,7 +1476,7 @@
    * Remove indentation helper classes from the current row group.
    */
   Drupal.tableDrag.prototype.row.prototype.removeIndentClasses = function () {
-    Object.keys(this.children).forEach((n) => {
+    Object.keys(this.children || {}).forEach((n) => {
       $(this.children[n]).find('.js-indentation')
         .removeClass('tree-child')
         .removeClass('tree-child-first')
