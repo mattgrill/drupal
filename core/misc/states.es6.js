@@ -618,15 +618,47 @@
 
   $document.on('state:required', (e) => {
     if (e.trigger) {
+      let $label;
+      let $firstRadio;
+
+      // Radio buttons are the only elements in fieldsets.
+      const isFieldRadio = $(e.target).is('fieldset');
+      if (isFieldRadio) {
+        $label = $(e.target).find('legend');
+        $firstRadio = $(e.target).find('input[type=radio]').first();
+      }
+
       if (e.value) {
-        const label = `label${e.target.id ? `[for=${e.target.id}]` : ''}`;
-        const $label = $(e.target).attr({ required: 'required', 'aria-required': 'aria-required' }).closest('.js-form-item, .js-form-wrapper').find(label);
-        // Avoids duplicate required markers on initialization.
+        if (isFieldRadio) {
+          // Find the radio element and mark as required.
+          $firstRadio.attr({
+            required: 'required',
+            'aria-required': 'aria-required',
+          });
+        }
+        else {
+          const label = `label${e.target.id ? `[for=${e.target.id}]` : ''}`;
+          // Avoids duplicate required markers on initialization.
+          $label = $(e.target).attr({
+            required: 'required',
+            'aria-required': 'aria-required',
+          })
+            .closest('.js-form-item, .js-form-wrapper')
+            .find(label);
+        }
+
         if (!$label.hasClass('js-form-required').length) {
           $label.addClass('js-form-required form-required');
         }
       }
-      else {
+      else if (isFieldRadio) {
+        $firstRadio
+          .removeAttr('required aria-required')
+          .closest('fieldset')
+          .find('legend')
+          .removeClass('js-form-required form-required');
+      }
+      else if (e.target) {
         $(e.target)
           .removeAttr('required aria-required')
           .closest('.js-form-item, .js-form-wrapper')

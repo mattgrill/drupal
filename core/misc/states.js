@@ -319,14 +319,36 @@
 
   $document.on('state:required', function (e) {
     if (e.trigger) {
+      var $label = void 0;
+      var $firstRadio = void 0;
+
+      var isFieldRadio = $(e.target).is('fieldset');
+      if (isFieldRadio) {
+        $label = $(e.target).find('legend');
+        $firstRadio = $(e.target).find('input[type=radio]').first();
+      }
+
       if (e.value) {
-        var label = 'label' + (e.target.id ? '[for=' + e.target.id + ']' : '');
-        var $label = $(e.target).attr({ required: 'required', 'aria-required': 'aria-required' }).closest('.js-form-item, .js-form-wrapper').find(label);
+        if (isFieldRadio) {
+          $firstRadio.attr({
+            required: 'required',
+            'aria-required': 'aria-required'
+          });
+        } else {
+          var label = 'label' + (e.target.id ? '[for=' + e.target.id + ']' : '');
+
+          $label = $(e.target).attr({
+            required: 'required',
+            'aria-required': 'aria-required'
+          }).closest('.js-form-item, .js-form-wrapper').find(label);
+        }
 
         if (!$label.hasClass('js-form-required').length) {
           $label.addClass('js-form-required form-required');
         }
-      } else {
+      } else if (isFieldRadio) {
+        $firstRadio.removeAttr('required aria-required').closest('fieldset').find('legend').removeClass('js-form-required form-required');
+      } else if (e.target) {
         $(e.target).removeAttr('required aria-required').closest('.js-form-item, .js-form-wrapper').find('label.js-form-required').removeClass('js-form-required form-required');
       }
     }
