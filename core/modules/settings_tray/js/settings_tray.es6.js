@@ -154,23 +154,20 @@
    */
   function prepareAjaxLinks() {
     // Find all Ajax instances that use the 'off_canvas' renderer.
-    Drupal.ajax.instances
-      /**
-       * If there is an element and the renderer is 'off_canvas' then we want
-       * to add our changes.
-       */
-      .filter(instance => instance && $(instance.element).attr('data-dialog-renderer') === 'off_canvas')
-      /**
-       * Loop through all Ajax instances that use the 'off_canvas' renderer to
-       * set active editable ID.
-       */
+    (Drupal.ajax.instances || [])
       .forEach((instance) => {
-        // Check to make sure existing dialogOptions aren't overridden.
-        if (!instance.options.data.hasOwnProperty('dialogOptions')) {
-          instance.options.data.dialogOptions = {};
+        /**
+         * If there is an element and the renderer is 'off_canvas' then we want
+         * to add our changes.
+         */
+        if (instance && instance.element && instance.element.getAttribute('data-dialog-renderer') === 'off_canvas') {
+          // Check to make sure existing dialogOptions aren't overridden.
+          if (!instance.options.data.hasOwnProperty('dialogOptions')) {
+            instance.options.data.dialogOptions = {};
+          }
+          instance.options.data.dialogOptions.settingsTrayActiveEditableId = $(instance.element).parents('.settings-tray-editable').attr('id');
+          instance.progress = { type: 'fullscreen' };
         }
-        instance.options.data.dialogOptions.settingsTrayActiveEditableId = $(instance.element).parents('.settings-tray-editable').attr('id');
-        instance.progress = { type: 'fullscreen' };
       });
   }
 

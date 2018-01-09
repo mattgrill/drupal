@@ -94,14 +94,14 @@
   }
 
   function prepareAjaxLinks() {
-    Drupal.ajax.instances.filter(function (instance) {
-      return instance && $(instance.element).attr('data-dialog-renderer') === 'off_canvas';
-    }).forEach(function (instance) {
-      if (!instance.options.data.hasOwnProperty('dialogOptions')) {
-        instance.options.data.dialogOptions = {};
+    (Drupal.ajax.instances || []).forEach(function (instance) {
+      if (instance && instance.element && instance.element.getAttribute('data-dialog-renderer') === 'off_canvas') {
+        if (!instance.options.data.hasOwnProperty('dialogOptions')) {
+          instance.options.data.dialogOptions = {};
+        }
+        instance.options.data.dialogOptions.settingsTrayActiveEditableId = $(instance.element).parents('.settings-tray-editable').attr('id');
+        instance.progress = { type: 'fullscreen' };
       }
-      instance.options.data.dialogOptions.settingsTrayActiveEditableId = $(instance.element).parents('.settings-tray-editable').attr('id');
-      instance.progress = { type: 'fullscreen' };
     });
   }
 
