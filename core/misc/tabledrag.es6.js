@@ -411,14 +411,17 @@
     const field = $(row).find(`.${group}`);
     const tableSettingsGroup = this.tableSettings[group];
     return Object.keys(tableSettingsGroup).map((delta) => {
-      if (field.is(`.${tableSettingsGroup[delta].target}`)) {
-        const rowSettings = {};
+      const targetClass = tableSettingsGroup[delta].target;
+      let rowSettings;
+      if (field.is(`.${targetClass}`)) {
+        // Return a copy of the row settings.
+        rowSettings = {};
         Object.keys(tableSettingsGroup[delta]).forEach((n) => {
           rowSettings[n] = tableSettingsGroup[delta][n];
         });
-        return rowSettings;
       }
-    })[0];
+      return rowSettings;
+    }).filter(rowSetting => rowSetting)[0];
   };
 
   /**
@@ -870,7 +873,7 @@
         if (this.indentEnabled) {
           // Check that this row is not a child of the row being dragged.
           if (Object.keys(this.rowObject.group)
-            .every(o => (this.rowObject.group[o] === row))) {
+            .some(o => (this.rowObject.group[o] === row))) {
             return null;
           }
         }

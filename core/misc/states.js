@@ -128,9 +128,9 @@
           }
         }
       } else if ($.isPlainObject(constraints)) {
-          result = Object.keys(constraints).map(function (constraint) {
-            return ternary(result, _this3.checkConstraints(constraints[constraint], selector, constraint));
-          })[0];
+          result = Object.keys(constraints).every(function (constraint) {
+            return _this3.checkConstraints(constraints[constraint], selector, constraint);
+          });
         }
       return result;
     },

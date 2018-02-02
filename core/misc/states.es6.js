@@ -255,14 +255,11 @@
 
       else if ($.isPlainObject(constraints)) {
         // This constraint is an object (AND).
-        result = Object.keys(constraints).map(constraint => ternary(
-          result,
-          this.checkConstraints(
-            constraints[constraint],
-            selector,
-            constraint,
-          ),
-        ))[0];
+        result = Object.keys(constraints).every(constraint => this.checkConstraints(
+          constraints[constraint],
+          selector,
+          constraint,
+        ));
       }
       return result;
     },

@@ -214,13 +214,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     var field = $(row).find('.' + group);
     var tableSettingsGroup = this.tableSettings[group];
     return Object.keys(tableSettingsGroup).map(function (delta) {
-      if (field.is('.' + tableSettingsGroup[delta].target)) {
-        var rowSettings = {};
+      var targetClass = tableSettingsGroup[delta].target;
+      var rowSettings = void 0;
+      if (field.is('.' + targetClass)) {
+        rowSettings = {};
         Object.keys(tableSettingsGroup[delta]).forEach(function (n) {
           rowSettings[n] = tableSettingsGroup[delta][n];
         });
-        return rowSettings;
       }
+      return rowSettings;
+    }).filter(function (rowSetting) {
+      return rowSetting;
     })[0];
   };
 
@@ -543,7 +547,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (y > rowY - rowHeight && y < rowY + rowHeight) {
         if (_this3.indentEnabled) {
-          if (Object.keys(_this3.rowObject.group).every(function (o) {
+          if (Object.keys(_this3.rowObject.group).some(function (o) {
             return _this3.rowObject.group[o] === row;
           })) {
             return {
