@@ -255,11 +255,13 @@
 
       else if ($.isPlainObject(constraints)) {
         // This constraint is an object (AND).
-        result = Object.keys(constraints).every(constraint => this.checkConstraints(
-          constraints[constraint],
-          selector,
-          constraint,
-        ));
+        if (Object.keys(constraints)
+          .every(constraint => ternary(
+            result,
+            this.checkConstraints(constraints[constraint], selector, constraint),
+          ))) {
+          return false;
+        }
       }
       return result;
     },
