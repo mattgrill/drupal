@@ -8,10 +8,6 @@
 (function ($, Drupal) {
   Drupal.behaviors.color = {
     attach: function attach(context, settings) {
-      var i = void 0;
-      var j = void 0;
-      var colors = void 0;
-
       var form = $(context).find('#system-theme-settings .color-form').once('color');
       if (form.length === 0) {
         return;
@@ -40,7 +36,7 @@
 
         width.push(parseInt(gradient.css('width'), 10) / 10);
 
-        for (j = 0; j < (settings.gradients[i].direction === 'vertical' ? height[i] : width[i]); ++j) {
+        for (var j = 0; j < (settings.gradients[i].direction === 'vertical' ? height[i] : width[i]); ++j) {
           gradient.append('<div class="gradient-line"></div>');
         }
       });
@@ -49,7 +45,7 @@
         var schemes = settings.color.schemes;
         var colorScheme = this.options[this.selectedIndex].value;
         if (colorScheme !== '' && schemes[colorScheme]) {
-          colors = schemes[colorScheme];
+          var colors = schemes[colorScheme];
           Object.keys(colors || {}).forEach(function (fieldName) {
             callback($('#edit-palette-' + fieldName), colors[fieldName], false, true);
           });
@@ -95,6 +91,8 @@
 
       function callback(input, color, propagate, colorScheme) {
         var matched = void 0;
+        var i = void 0;
+        var j = void 0;
 
         $(input).css({
           backgroundColor: color,

@@ -14,9 +14,6 @@
    */
   Drupal.behaviors.color = {
     attach(context, settings) {
-      let i;
-      let j;
-      let colors;
       // This behavior attaches by ID, so is only valid once on a page.
       const form = $(context).find('#system-theme-settings .color-form').once('color');
       if (form.length === 0) {
@@ -53,7 +50,7 @@
         // Each gradient line should have a height (or width for horizontal
         // gradients) of 10px (because we divided the height/width by 10
         // above).
-        for (j = 0; j < (settings.gradients[i].direction === 'vertical' ? height[i] : width[i]); ++j) {
+        for (let j = 0; j < (settings.gradients[i].direction === 'vertical' ? height[i] : width[i]); ++j) {
           gradient.append('<div class="gradient-line"></div>');
         }
       });
@@ -64,7 +61,7 @@
         const colorScheme = this.options[this.selectedIndex].value;
         if (colorScheme !== '' && schemes[colorScheme]) {
           // Get colors of active scheme.
-          colors = schemes[colorScheme];
+          const colors = schemes[colorScheme];
           Object.keys(colors || {}).forEach((fieldName) => {
             callback($(`#edit-palette-${fieldName}`), colors[fieldName], false, true);
           });
@@ -154,6 +151,8 @@
        */
       function callback(input, color, propagate, colorScheme) {
         let matched;
+        let i;
+        let j;
         // Set background/foreground colors.
         $(input).css({
           backgroundColor: color,
