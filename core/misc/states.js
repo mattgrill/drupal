@@ -128,11 +128,9 @@
           }
         }
       } else if ($.isPlainObject(constraints)) {
-          if (Object.keys(constraints).every(function (constraint) {
-            return _this3.checkConstraints(constraints[constraint], selector, constraint);
-          })) {
-            return false;
-          }
+          return Object.keys(constraints).every(function (constraint) {
+            return !_this3.checkConstraints(constraints[constraint], selector, constraint);
+          });
         }
       return result;
     },

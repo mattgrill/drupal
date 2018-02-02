@@ -255,14 +255,22 @@
 
       else if ($.isPlainObject(constraints)) {
         // This constraint is an object (AND).
-        if (Object.keys(constraints)
-          .every(constraint => this.checkConstraints(
+        return Object.keys(constraints)
+          .every(constraint => !this.checkConstraints(
             constraints[constraint],
             selector,
             constraint,
-          ))) {
-          return false;
-        }
+          ));
+        // for (const n in constraints) {
+        //   if (constraints.hasOwnProperty(n)) {
+        //     result = ternary(result, this.checkConstraints(constraints[n], selector, n));
+        //     // False and anything else will evaluate to false, so return when
+        //     // any false condition is found.
+        //     if (result === false) {
+        //       return false;
+        //     }
+        //   }
+        // }
       }
       return result;
     },
