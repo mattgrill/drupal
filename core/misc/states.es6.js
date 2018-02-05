@@ -78,6 +78,73 @@
   };
 
   /**
+   * These are helper functions implementing addition "operators" and don't
+   * implement any logic that is particular to states.
+   */
+
+  /**
+   * Bitwise AND with a third undefined state.
+   *
+   * @function Drupal.states~ternary
+   *
+   * @param {*} a
+   *   Value a.
+   * @param {*} b
+   *   Value b
+   *
+   * @return {bool}
+   *   The result.
+   */
+  function ternary(a, b) {
+    if (typeof a === 'undefined') {
+      return b;
+    }
+    else if (typeof b === 'undefined') {
+      return a;
+    }
+
+    return a && b;
+  }
+
+  /**
+   * Inverts a (if it's not undefined) when invertState is true.
+   *
+   * @function Drupal.states~invert
+   *
+   * @param {*} a
+   *   The value to maybe invert.
+   * @param {bool} invertState
+   *   Whether to invert state or not.
+   *
+   * @return {bool}
+   *   The result.
+   */
+  function invert(a, invertState) {
+    return (invertState && typeof a !== 'undefined') ? !a : a;
+  }
+
+  /**
+   * Compares two values while ignoring undefined values.
+   *
+   * @function Drupal.states~compare
+   *
+   * @param {*} a
+   *   Value a.
+   * @param {*} b
+   *   Value b.
+   *
+   * @return {bool}
+   *   The comparison result.
+   */
+  function compare(a, b) {
+    if (a === b) {
+      return typeof a === 'undefined' ? a : true;
+    }
+
+    return typeof a === 'undefined' || typeof b === 'undefined';
+  }
+
+  /**
    * Comparison functions for comparing the value of an element with the
    * specification from the dependency settings. If the object type can't be
    * found in this list, the === operator is used by default.
@@ -646,71 +713,4 @@
       }
     }
   });
-
-  /**
-   * These are helper functions implementing addition "operators" and don't
-   * implement any logic that is particular to states.
-   */
-
-  /**
-   * Bitwise AND with a third undefined state.
-   *
-   * @function Drupal.states~ternary
-   *
-   * @param {*} a
-   *   Value a.
-   * @param {*} b
-   *   Value b
-   *
-   * @return {bool}
-   *   The result.
-   */
-  function ternary(a, b) {
-    if (typeof a === 'undefined') {
-      return b;
-    }
-    else if (typeof b === 'undefined') {
-      return a;
-    }
-
-    return a && b;
-  }
-
-  /**
-   * Inverts a (if it's not undefined) when invertState is true.
-   *
-   * @function Drupal.states~invert
-   *
-   * @param {*} a
-   *   The value to maybe invert.
-   * @param {bool} invertState
-   *   Whether to invert state or not.
-   *
-   * @return {bool}
-   *   The result.
-   */
-  function invert(a, invertState) {
-    return (invertState && typeof a !== 'undefined') ? !a : a;
-  }
-
-  /**
-   * Compares two values while ignoring undefined values.
-   *
-   * @function Drupal.states~compare
-   *
-   * @param {*} a
-   *   Value a.
-   * @param {*} b
-   *   Value b.
-   *
-   * @return {bool}
-   *   The comparison result.
-   */
-  function compare(a, b) {
-    if (a === b) {
-      return typeof a === 'undefined' ? a : true;
-    }
-
-    return typeof a === 'undefined' || typeof b === 'undefined';
-  }
 }(jQuery, Drupal));

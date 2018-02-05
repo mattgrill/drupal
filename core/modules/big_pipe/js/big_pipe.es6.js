@@ -45,6 +45,14 @@
     }
   }
 
+  // The frequency with which to check for newly arrived BigPipe placeholders.
+  // Hence 50 ms means we check 20 times per second. Setting this to 100 ms or
+  // more would cause the user to see content appear noticeably slower.
+  const interval = drupalSettings.bigPipeInterval || 50;
+
+  // The internal ID to contain the watcher service.
+  let timeoutID;
+
   /**
    * Processes a streamed HTML document receiving placeholder replacements.
    *
@@ -85,13 +93,6 @@
       }
     }, interval);
   }
-
-  // The frequency with which to check for newly arrived BigPipe placeholders.
-  // Hence 50 ms means we check 20 times per second. Setting this to 100 ms or
-  // more would cause the user to see content appear noticeably slower.
-  const interval = drupalSettings.bigPipeInterval || 50;
-  // The internal ID to contain the watcher service.
-  let timeoutID;
 
   bigPipeProcess();
 

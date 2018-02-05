@@ -9,6 +9,7 @@
   Drupal.behaviors.responsiveDetails = {
     attach: function attach(context) {
       var $details = $(context).find('details').once('responsive-details');
+      var $summaries = $details.find('> summary');
 
       if (!$details.length) {
         return;
@@ -31,7 +32,6 @@
         detailsToggle(event.matches);
       }
 
-      var $summaries = $details.find('> summary');
       var mql = window.matchMedia('(min-width:48em)');
       mql.addListener(handleDetailsMQ);
       detailsToggle(mql.matches);

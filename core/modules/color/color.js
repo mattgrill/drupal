@@ -21,37 +21,9 @@
       var farb = $.farbtastic('.color-placeholder');
 
       var reference = settings.color.reference;
-      Object.keys(reference || {}).forEach(function (color) {
-        reference[color] = farb.RGBToHSL(farb.unpack(reference[color]));
-      });
 
       var height = [];
       var width = [];
-
-      Object.keys(settings.gradients || {}).forEach(function (i) {
-        $('.color-preview').once('color').append('<div id="gradient-' + i + '"></div>');
-        var gradient = $('.color-preview #gradient-' + i);
-
-        height.push(parseInt(gradient.css('height'), 10) / 10);
-
-        width.push(parseInt(gradient.css('width'), 10) / 10);
-
-        for (var j = 0; j < (settings.gradients[i].direction === 'vertical' ? height[i] : width[i]); ++j) {
-          gradient.append('<div class="gradient-line"></div>');
-        }
-      });
-
-      form.find('#edit-scheme').on('change', function () {
-        var schemes = settings.color.schemes;
-        var colorScheme = this.options[this.selectedIndex].value;
-        if (colorScheme !== '' && schemes[colorScheme]) {
-          var colors = schemes[colorScheme];
-          Object.keys(colors || {}).forEach(function (fieldName) {
-            callback($('#edit-palette-' + fieldName), colors[fieldName], false, true);
-          });
-          preview();
-        }
-      });
 
       function preview() {
         Drupal.color.callback(context, settings, form, farb, height, width);
@@ -87,6 +59,12 @@
         }
 
         return farb.pack(farb.HSLToRGB(given));
+      }
+
+      function resetScheme() {
+        form.find('#edit-scheme').each(function () {
+          this.selectedIndex = this.options.length - 1;
+        });
       }
 
       function callback(input, color, propagate, colorScheme) {
@@ -128,11 +106,34 @@
         }
       }
 
-      function resetScheme() {
-        form.find('#edit-scheme').each(function () {
-          this.selectedIndex = this.options.length - 1;
-        });
-      }
+      Object.keys(reference || {}).forEach(function (color) {
+        reference[color] = farb.RGBToHSL(farb.unpack(reference[color]));
+      });
+
+      Object.keys(settings.gradients || {}).forEach(function (i) {
+        $('.color-preview').once('color').append('<div id="gradient-' + i + '"></div>');
+        var gradient = $('.color-preview #gradient-' + i);
+
+        height.push(parseInt(gradient.css('height'), 10) / 10);
+
+        width.push(parseInt(gradient.css('width'), 10) / 10);
+
+        for (var j = 0; j < (settings.gradients[i].direction === 'vertical' ? height[i] : width[i]); ++j) {
+          gradient.append('<div class="gradient-line"></div>');
+        }
+      });
+
+      form.find('#edit-scheme').on('change', function () {
+        var schemes = settings.color.schemes;
+        var colorScheme = this.options[this.selectedIndex].value;
+        if (colorScheme !== '' && schemes[colorScheme]) {
+          var colors = schemes[colorScheme];
+          Object.keys(colors || {}).forEach(function (fieldName) {
+            callback($('#edit-palette-' + fieldName), colors[fieldName], false, true);
+          });
+          preview();
+        }
+      });
 
       function focus(e) {
         var input = e.target;

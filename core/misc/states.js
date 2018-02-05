@@ -49,6 +49,28 @@
     });
   };
 
+  function ternary(a, b) {
+    if (typeof a === 'undefined') {
+      return b;
+    } else if (typeof b === 'undefined') {
+      return a;
+    }
+
+    return a && b;
+  }
+
+  function invert(a, invertState) {
+    return invertState && typeof a !== 'undefined' ? !a : a;
+  }
+
+  function _compare2(a, b) {
+    if (a === b) {
+      return typeof a === 'undefined' ? a : true;
+    }
+
+    return typeof a === 'undefined' || typeof b === 'undefined';
+  }
+
   states.Dependent.comparisons = {
     RegExp: function RegExp(reference, value) {
       return reference.test(value);
@@ -348,26 +370,4 @@
       }
     }
   });
-
-  function ternary(a, b) {
-    if (typeof a === 'undefined') {
-      return b;
-    } else if (typeof b === 'undefined') {
-      return a;
-    }
-
-    return a && b;
-  }
-
-  function invert(a, invertState) {
-    return invertState && typeof a !== 'undefined' ? !a : a;
-  }
-
-  function _compare2(a, b) {
-    if (a === b) {
-      return typeof a === 'undefined' ? a : true;
-    }
-
-    return typeof a === 'undefined' || typeof b === 'undefined';
-  }
 })(jQuery, Drupal);

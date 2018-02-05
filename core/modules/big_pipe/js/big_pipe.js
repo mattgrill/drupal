@@ -28,6 +28,10 @@
     }
   }
 
+  var interval = drupalSettings.bigPipeInterval || 50;
+
+  var timeoutID = void 0;
+
   function bigPipeProcessDocument(context) {
     if (!context.querySelector('script[data-big-pipe-event="start"]')) {
       return false;
@@ -52,10 +56,6 @@
       }
     }, interval);
   }
-
-  var interval = drupalSettings.bigPipeInterval || 50;
-
-  var timeoutID = void 0;
 
   bigPipeProcess();
 
