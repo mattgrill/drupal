@@ -129,10 +129,7 @@
         }
       } else if ($.isPlainObject(constraints)) {
           if (Object.keys(constraints).every(function (constraint) {
-            result = ternary(result, _this3.checkConstraints(constraints[constraint], selector, constraint));
-            if (result === false) {
-              return false;
-            }
+            return ternary(result, _this3.checkConstraints(constraints[constraint], selector, constraint));
           })) {
             return false;
           }

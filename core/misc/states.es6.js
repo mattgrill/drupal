@@ -256,7 +256,7 @@
       else if ($.isPlainObject(constraints)) {
         // This constraint is an object (AND).
         if (Object.keys(constraints).every((constraint) => {
-          result = ternary(
+          return ternary(
             result,
             this.checkConstraints(
               constraints[constraint],
@@ -264,9 +264,6 @@
               constraint,
             ),
           );
-          if (result === false) {
-            return false;
-          }
         })) {
           return false;
         }
