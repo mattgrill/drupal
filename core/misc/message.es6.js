@@ -4,11 +4,11 @@
  */
 ((Drupal) => {
   /**
-   * @typedef {object} Drupal.message~messageDefinition
+   * @typedef {object} Drupal.Message~messageDefinition
    */
 
   /**
-   * Constructs a new instance of the Drupal.message object.
+   * Constructs a new instance of the Drupal.Message object.
    *
    * This provides a uniform interface for adding and removing messages to a
    * specific location on the page.
@@ -17,11 +17,11 @@
    *   The zone where to add messages. If no element is provided an attempt is
    *   made to determine a default location.
    *
-   * @return {Drupal.message~messageDefinition}
+   * @return {Drupal.Message~messageDefinition}
    *   Object to add and remove messages.
    */
 
-  Drupal.message = class {
+  Drupal.Message = class {
     constructor(messageWrapper = null) {
       this.messageWrapper = messageWrapper;
     }
@@ -41,7 +41,7 @@
         wrapper.setAttribute('data-drupal-messages', '');
         wrapper.removeAttribute('class');
       }
-      return wrapper.innerHTML === '' ? Drupal.message.messageInternalWrapper(wrapper) : wrapper.firstElementChild;
+      return wrapper.innerHTML === '' ? Drupal.Message.messageInternalWrapper(wrapper) : wrapper.firstElementChild;
     }
 
     /**
@@ -61,7 +61,7 @@
     /**
      * Sequentially adds a message to the message area.
      *
-     * @name Drupal.message~messageDefinition.add
+     * @name Drupal.Message~messageDefinition.add
      *
      * @param {string} message
      *   The message to display
@@ -84,7 +84,7 @@
      */
     add(message, options = {}) {
       if (!this.messageWrapper) {
-        this.messageWrapper = Drupal.message.defaultWrapper();
+        this.messageWrapper = Drupal.Message.defaultWrapper();
       }
       if (!options.hasOwnProperty('type')) {
         options.type = 'status';
@@ -95,7 +95,7 @@
       }
 
       // Send message to screen reader.
-      Drupal.message.announce(message, options);
+      Drupal.Message.announce(message, options);
       /**
        * Use the provided index for the message or generate a unique key to
        * allow message deletion.
@@ -105,8 +105,8 @@
         `${options.type}-${Math.random().toFixed(15).replace('0.', '')}`;
 
       // Throw an error if an unexpected message type is used.
-      if (!(Drupal.message.getMessageTypeLabels().hasOwnProperty(options.type))) {
-        throw new Error(`The message type, ${options.type}, is not present in Drupal.message.getMessageTypeLabels().`);
+      if (!(Drupal.Message.getMessageTypeLabels().hasOwnProperty(options.type))) {
+        throw new Error(`The message type, ${options.type}, is not present in Drupal.Message.getMessageTypeLabels().`);
       }
 
       this.messageWrapper.appendChild(Drupal.theme('message', { text: message }, options));
@@ -115,79 +115,45 @@
     }
 
     /**
-     * Select a set of messages based on index.
+     * Select a message based on id.
      *
-     * @name Drupal.message~messageDefinition.select
+     * @name Drupal.Message~messageDefinition.select
      *
-     * @param {string|Array.<string>} index
-     *   The message index to delete from the area.
+     * @param {string} id
+     *   The message id to delete from the area.
      *
-     * @return {NodeList|Array}
-     *   Elements found.
+     * @return {Element}
+     *   Element found.
      */
-    select(index) {
-      // When there are nothing to select, return an empty list.
-      if (!index || (Array.isArray(index) && index.length === 0)) {
-        return [];
-      }
-
-      // Construct an array of selectors based on the available message index(s).
-      const selectors = (Array.isArray(index) ? index : [index])
-        .map(currentIndex => `[data-drupal-message-id^="${currentIndex}"]`);
-
-      return this.messageWrapper.querySelectorAll(selectors.join(','));
-    }
-
-    /**
-     * Helper to remove elements.
-     *
-     * @param {NodeList|Array.<HTMLElement>} elements
-     *   DOM Nodes to be removed.
-     *
-     * @return {number}
-     *  Number of removed nodes.
-     */
-    removeElements(elements) {
-      if (!elements || !elements.length) {
-        return 0;
-      }
-
-      const length = elements.length;
-      for (let i = 0; i < length; i++) {
-        this.messageWrapper.removeChild(elements[i]);
-      }
-      return length;
+    select(id) {
+      return this.messageWrapper.querySelector(`[data-drupal-message-id^="${id}"]`);
     }
 
     /**
      * Removes messages from the message area.
      *
-     * @name Drupal.message~messageDefinition.remove
+     * @name Drupal.Message~messageDefinition.remove
      *
-     * @param {string|Array.<string>} ids
+     * @param {string} id
      *   Index of the message to remove, as returned by
-     *   {@link Drupal.message~messageDefinition.add}, or an
-     *   array of indexes.
+     *   {@link Drupal.Message~messageDefinition.add}.
      *
      * @return {number}
      *   Number of removed messages.
      */
-    remove(ids) {
-      const messages = this.select(ids);
-      return this.removeElements(messages);
+    remove(id) {
+      return this.messageWrapper.removeChild(this.select(id));
     }
 
     /**
      * Removes all messages from the message area.
      *
-     * @name Drupal.message~messageDefinition.clear
-     *
-     * @return {number}
-     *   Number of removed messages.
+     * @name Drupal.Message~messageDefinition.clear
      */
     clear() {
-      const messages = this.messageWrapper.querySelectorAll('[data-drupal-message-id]');
-      return this.removeElements(messages);
+      Array.prototype.forEach.call(this.messageWrapper.querySelectorAll('[data-drupal-message-id]'), (message) => {
+        this.messageWrapper.removeChild(message);
+      });
     }
 
     /**
@@ -253,7 +219,7 @@
    *   A DOM Node.
    */
   Drupal.theme.message = ({ text }, options) => {
-    const messagesTypes = Drupal.message.getMessageTypeLabels();
+    const messagesTypes = Drupal.Message.getMessageTypeLabels();
     const messageWraper = document.createElement('div');
     const messageText = document.createElement('h2');
     messageText.setAttribute('class', 'visually-hidden');

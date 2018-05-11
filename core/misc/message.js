@@ -10,7 +10,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 (function (Drupal) {
 
-  Drupal.message = function () {
+  Drupal.Message = function () {
     function _class() {
       var messageWrapper = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
@@ -25,7 +25,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
         if (!this.messageWrapper) {
-          this.messageWrapper = Drupal.message.defaultWrapper();
+          this.messageWrapper = Drupal.Message.defaultWrapper();
         }
         if (!options.hasOwnProperty('type')) {
           options.type = 'status';
@@ -35,12 +35,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           throw new Error('Message must be a string.');
         }
 
-        Drupal.message.announce(message, options);
+        Drupal.Message.announce(message, options);
 
         options.id = options.id ? String(options.id) : options.type + '-' + Math.random().toFixed(15).replace('0.', '');
 
-        if (!Drupal.message.getMessageTypeLabels().hasOwnProperty(options.type)) {
-          throw new Error('The message type, ' + options.type + ', is not present in Drupal.message.getMessageTypeLabels().');
+        if (!Drupal.Message.getMessageTypeLabels().hasOwnProperty(options.type)) {
+          throw new Error('The message type, ' + options.type + ', is not present in Drupal.Message.getMessageTypeLabels().');
         }
 
         this.messageWrapper.appendChild(Drupal.theme('message', { text: message }, options));
@@ -49,41 +49,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }, {
       key: 'select',
-      value: function select(index) {
-        if (!index || Array.isArray(index) && index.length === 0) {
-          return [];
-        }
-
-        var selectors = (Array.isArray(index) ? index : [index]).map(function (currentIndex) {
-          return '[data-drupal-message-id^="' + currentIndex + '"]';
-        });
-
-        return this.messageWrapper.querySelectorAll(selectors.join(','));
-      }
-    }, {
-      key: 'removeElements',
-      value: function removeElements(elements) {
-        if (!elements || !elements.length) {
-          return 0;
-        }
-
-        var length = elements.length;
-        for (var i = 0; i < length; i++) {
-          this.messageWrapper.removeChild(elements[i]);
-        }
-        return length;
+      value: function select(id) {
+        return this.messageWrapper.querySelector('[data-drupal-message-id^="' + id + '"]');
       }
     }, {
       key: 'remove',
-      value: function remove(ids) {
-        var messages = this.select(ids);
-        return this.removeElements(messages);
+      value: function remove(id) {
+        return this.messageWrapper.removeChild(this.select(id));
       }
     }, {
       key: 'clear',
       value: function clear() {
-        var messages = this.messageWrapper.querySelectorAll('[data-drupal-message-id]');
-        return this.removeElements(messages);
+        var _this = this;
+
+        Array.prototype.forEach.call(this.messageWrapper.querySelectorAll('[data-drupal-message-id]'), function (message) {
+          _this.messageWrapper.removeChild(message);
+        });
       }
     }], [{
       key: 'defaultWrapper',
@@ -95,7 +76,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           wrapper.setAttribute('data-drupal-messages', '');
           wrapper.removeAttribute('class');
         }
-        return wrapper.innerHTML === '' ? Drupal.message.messageInternalWrapper(wrapper) : wrapper.firstElementChild;
+        return wrapper.innerHTML === '' ? Drupal.Message.messageInternalWrapper(wrapper) : wrapper.firstElementChild;
       }
     }, {
       key: 'getMessageTypeLabels',
@@ -133,7 +114,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   Drupal.theme.message = function (_ref, options) {
     var text = _ref.text;
 
-    var messagesTypes = Drupal.message.getMessageTypeLabels();
+    var messagesTypes = Drupal.Message.getMessageTypeLabels();
     var messageWraper = document.createElement('div');
     var messageText = document.createElement('h2');
     messageText.setAttribute('class', 'visually-hidden');
