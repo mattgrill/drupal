@@ -84,7 +84,7 @@ class StatusMessages extends RenderElement {
 
     if ($messages) {
       // Render the messages.
-      $render = [
+      $render[] = [
         '#theme' => 'status_messages',
         // @todo Improve when https://www.drupal.org/node/2278383 lands.
         '#message_list' => $messages,
@@ -95,6 +95,10 @@ class StatusMessages extends RenderElement {
         ],
       ];
     }
+    $render[] = [
+      '#markup' => '<div data-drupal-messages-fallback class="hidden"></div>',
+    ];
+
     return $render;
   }
 
